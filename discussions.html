@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Core — Discussions</title>
+  <link rel="stylesheet" href="biu-design.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/>
+  <script src="biu-design.js" defer></script>
+  <style>
+    .thread-card { display:flex; gap:12px; padding:16px; border-radius:var(--radius-md); background:rgba(255,255,255,0.2); margin-bottom:10px; cursor:pointer; transition:background 0.2s,transform 0.2s; }
+    [data-theme="dark"] .thread-card { background:rgba(0,0,0,0.2); }
+    .thread-card:hover { background:rgba(255,255,255,0.35); transform:translateX(4px); }
+    .thread-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; color:white; flex-shrink:0; font-weight:700; }
+    .thread-meta { font-size:12px; color:var(--text-muted); margin-top:4px; display:flex; gap:12px; }
+    .tag { display:inline-flex; align-items:center; padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; }
+  </style>
+</head>
+<body class="page-body">
+  <div class="animated-bg">
+    <div class="animated-blob blob-1"></div>
+    <div class="animated-blob blob-2"></div>
+    <div class="animated-blob blob-3"></div>
+  </div>
+  <header class="top-navbar">
+    <a href="index.html" class="navbar-brand">Campus Core</a>
+    <div class="navbar-actions">
+      <a href="login.html" class="guest-badge"><span class="material-symbols-rounded" style="font-size:16px">person_add</span>Guest</a>
+      <button class="theme-toggle-btn" id="theme-toggle"><span class="material-symbols-rounded">light_mode</span></button>
+      <button class="menu-btn" id="menu-btn"><span class="material-symbols-rounded">menu</span></button>
+    </div>
+  </header>
+  <nav class="nav-dropdown" id="nav-dropdown">
+    <a href="cgpa.html" class="dropdown-item">CGPA Calculator</a>
+    <a href="assignment.html" class="dropdown-item">Assignments</a>
+    <a href="discussions.html" class="dropdown-item">Discussions</a>
+    <a href="download.html" class="dropdown-item">Downloads</a>
+    <a href="hall.html" class="dropdown-item">Hall of Fame</a>
+    <a href="news.html" class="dropdown-item">News Feed</a>
+    <a href="pq.html" class="dropdown-item">Past Questions</a>
+    <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
+    <a href="subscriptions.html" class="dropdown-item">Subscriptions</a>
+    <a href="admin.html" class="dropdown-item">Admin Panel</a>
+    <div class="dropdown-divider"></div>
+    <a href="privacy.html" class="dropdown-item">Privacy Policy</a>
+    <a href="support.html" class="dropdown-item">Support</a>
+  </nav>
+  <main class="main-content">
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 class="page-title">Discussions</h1>
+        <p class="page-subtitle">Join conversations with fellow students</p>
+      </div>
+      <button class="btn btn-primary" onclick="alert('Sign in to create a post!')">
+        <span class="material-symbols-rounded">add</span> New Post
+      </button>
+    </div>
+
+    <div class="warning-box" style="margin-bottom:16px;">
+      ⚠️ <a href="login.html" style="color:#3f19e6;font-weight:600;">Sign in</a> to participate in discussions and create posts.
+    </div>
+
+    <div class="glass-card">
+      <h3 style="font-weight:700;margin-bottom:14px;font-size:16px;">Recent Threads</h3>
+
+      <div class="thread-card">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#3f19e6,#0ea5e9);">C</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Best resources for MTH 201 exam prep?</div>
+          <div class="thread-meta">
+            <span>By ChukwuLove</span>
+            <span>23 replies</span>
+            <span>2h ago</span>
+          </div>
+          <span class="tag" style="background:rgba(63,25,230,0.1);color:#3f19e6;margin-top:6px;">Mathematics</span>
+        </div>
+      </div>
+
+      <div class="thread-card">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#10b981,#0ea5e9);">A</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Study group for Computer Science 300L</div>
+          <div class="thread-meta">
+            <span>By AdeolaDev</span>
+            <span>8 replies</span>
+            <span>5h ago</span>
+          </div>
+          <span class="tag" style="background:rgba(16,185,129,0.1);color:#10b981;margin-top:6px;">Study Group</span>
+        </div>
+      </div>
+
+      <div class="thread-card">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">F</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">How to handle multiple assignment deadlines?</div>
+          <div class="thread-meta">
+            <span>By FaithOkeke</span>
+            <span>15 replies</span>
+            <span>1d ago</span>
+          </div>
+          <span class="tag" style="background:rgba(245,158,11,0.1);color:#f59e0b;margin-top:6px;">Tips & Advice</span>
+        </div>
+      </div>
+
+      <div class="thread-card">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#7c3aed,#0ea5e9);">E</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">Looking for BIO 101 past questions — 2023</div>
+          <div class="thread-meta">
+            <span>By EmmaBioSci</span>
+            <span>4 replies</span>
+            <span>2d ago</span>
+          </div>
+          <span class="tag" style="background:rgba(124,58,237,0.1);color:#7c3aed;margin-top:6px;">Resources</span>
+        </div>
+      </div>
+    </div>
+  </main>
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item" data-page="index.html,"><div class="nav-icon-wrap"><span class="material-symbols-rounded">home</span></div><span class="nav-label">Home</span></a>
+    <a href="calendar.html" class="nav-item" data-page="calendar.html"><div class="nav-icon-wrap"><span class="material-symbols-rounded">calendar_month</span></div><span class="nav-label">Calendar</span></a>
+    <a href="note.html" class="nav-item" data-page="note.html"><div class="nav-icon-wrap"><span class="material-symbols-rounded">book</span></div><span class="nav-label">Notes</span></a>
+    <a href="chatbot.html" class="nav-item" data-page="chatbot.html"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
+    <a href="profile.html" class="nav-item" data-page="profile.html"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
+  </nav>
+</body>
+</html>
+
