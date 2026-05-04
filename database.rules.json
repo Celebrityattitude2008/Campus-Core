@@ -1,0 +1,49 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "profiles": {
+      "$uid": {
+        ".read": "$uid === auth.uid || auth.token.email === 'officialcampuscore@gmail.com'",
+        ".write": "$uid === auth.uid || auth.token.email === 'officialcampuscore@gmail.com'",
+        "cgpa": {
+          ".validate": "newData.isNumber() || newData.isString()"
+        },
+        "level": {
+          ".validate": "newData.isString()"
+        },
+        "department": {
+          ".validate": "newData.isString()"
+        }
+      }
+    },
+    "activities": {
+      "$uid": {
+        ".read": "$uid === auth.uid || auth.token.email === 'officialcampuscore@gmail.com'",
+        ".write": "$uid === auth.uid",
+        "$activityId": {
+          ".validate": "newData.hasChildren(['title', 'description', 'timestamp', 'type']) && newData.child('title').isString() && newData.child('description').isString() && newData.child('timestamp').isNumber() && newData.child('type').isString()"
+        }
+      }
+    },
+    "admin": {
+      ".read": "auth.token.email === 'officialcampuscore@gmail.com'",
+      ".write": "auth.token.email === 'officialcampuscore@gmail.com'"
+    },
+    "public": {
+      ".read": true,
+      ".write": "auth.token.email === 'officialcampuscore@gmail.com'"
+    },
+    "news": {
+      ".read": true,
+      ".write": "auth.token.email === 'officialcampuscore@gmail.com'"
+    },
+    "assignments": {
+      ".read": true,
+      ".write": "auth != null",
+      "$assignmentId": {
+        ".validate": "newData.hasChildren(['course', 'date', 'content']) && newData.child('course').isString() && newData.child('date').isString() && newData.child('content').isString()"
+      }
+    }
+  }
+}

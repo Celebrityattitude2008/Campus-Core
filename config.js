@@ -2,20 +2,20 @@
 // Check if running in a Node environment or browser
 const isNodeEnvironment = typeof module !== 'undefined' && module.exports;
 
-// Load from environment variables (populated at build time or runtime)
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: typeof process !== 'undefined' ? process.env.FIREBASE_API_KEY : window.FIREBASE_API_KEY,
-  authDomain: typeof process !== 'undefined' ? process.env.FIREBASE_AUTH_DOMAIN : window.FIREBASE_AUTH_DOMAIN,
-  projectId: typeof process !== 'undefined' ? process.env.FIREBASE_PROJECT_ID : window.FIREBASE_PROJECT_ID,
-  storageBucket: typeof process !== 'undefined' ? process.env.FIREBASE_STORAGE_BUCKET : window.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: typeof process !== 'undefined' ? process.env.FIREBASE_MESSAGING_SENDER_ID : window.FIREBASE_MESSAGING_SENDER_ID,
-  appId: typeof process !== 'undefined' ? process.env.FIREBASE_APP_ID : window.FIREBASE_APP_ID,
-  databaseURL: typeof process !== 'undefined' ? process.env.FIREBASE_DATABASE_URL : window.FIREBASE_DATABASE_URL,
-  measurementId: typeof process !== 'undefined' ? process.env.FIREBASE_MEASUREMENT_ID : window.FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyDvSFDc8V_u9pqICK-FH_S8tZTPi-p16gU",
+  authDomain: "campus-core-7ca30.firebaseapp.com",
+  databaseURL: "https://campus-core-7ca30-default-rtdb.firebaseio.com",
+  projectId: "campus-core-7ca30",
+  storageBucket: "campus-core-7ca30.appspot.com",
+  messagingSenderId: "197537030755",
+  appId: "1:197537030755:web:3a1437008b0da42842ce56",
+  measurementId: "G-TPB3PZ3LMY"
 };
 
-// Gemini API Key
-const geminiApiKey = typeof process !== 'undefined' ? process.env.GEMINI_API_KEY : window.GEMINI_API_KEY;
+// Gemini API Key (keep secret if you choose to use it)
+const geminiApiKey = "AIzaSyBC1OqnM47myCSKXE0zy61GnqKjVb6413Y";
 
 if (isNodeEnvironment) {
   module.exports = { firebaseConfig, geminiApiKey };
