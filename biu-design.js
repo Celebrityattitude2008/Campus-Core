@@ -199,8 +199,10 @@
       if (user) {
         // User is signed in
       } else {
-        // No user signed in, redirect to login
-        if (window.location.pathname !== '/login.html' && window.location.pathname !== '/sign.html' && window.location.pathname !== '/resetpassword.html') {
+        // No user signed in, redirect to login unless on auth pages
+        const path = window.location.pathname;
+        const authPaths = ['/login.html', '/sign.html', '/resetpassword.html', '/login', '/sign', '/resetpassword'];
+        if (!authPaths.includes(path)) {
           window.location.href = 'login';
         }
       }
@@ -213,7 +215,7 @@
 
     if (!hasConfig) {
       try {
-        await loadScript('config.js');
+        await loadScript('/config.js');
       } catch (err) {
         return;
       }
