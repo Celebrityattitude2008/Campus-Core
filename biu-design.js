@@ -168,10 +168,74 @@
     });
 
     document.addEventListener('click', (e) => {
-      if (!dropdown.contains(e.target) && e.target !== menuBtn) {
+      if (!dropdown.contains(e.target) && !e.target.closest('#menu-btn')) {
         dropdown.classList.remove('open');
       }
     });
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`script[src="${src}"]`)) {
+        return resolve();
+      }
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+      document.head.appendChild(script);
+    });
+  }
+
+  function initAuthState() {
+    if (!window.firebase || !firebase.auth) return;
+    if (!firebase.apps.length && window.firebaseConfig) {
+      firebase.initializeApp(window.firebaseConfig);
+    }
+
+    const auth = firebase.auth();
+    auth.onAuthStateChanged(user => {
+      document.querySelectorAll('.guest-badge').forEach(el => {
+        if (user) {
+          el.innerHTML = `<span class="material-symbols-rounded" style="font-size:16px">person</span>${user.displayName || 'Student'}`;
+          el.href = 'profile';
+        } else {
+          el.innerHTML = `<span class="material-symbols-rounded" style="font-size:16px">person_add</span>Guest`;
+          el.href = 'login';
+        }
+      });
+    });
+  }
+
+  async function initAuth() {
+    const hasFirebase = window.firebase && firebase.auth;
+    const hasConfig = window.firebaseConfig;
+
+    if (!hasConfig) {
+      try {
+        await loadScript('config.js');
+      } catch (err) {
+        return;
+      }
+    }
+
+    if (!hasFirebase) {
+      try {
+        await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js');
+        await loadScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js');
+      } catch (err) {
+        return;
+      }
+    }
+
+    if (window.firebase && !firebase.apps.length && window.firebaseConfig) {
+      firebase.initializeApp(window.firebaseConfig);
+    }
+
+    if (window.firebase && firebase.auth) {
+      initAuthState();
+    }
   }
 
   /* ---- 4. BOTTOM NAV ACTIVE STATE ---- */
@@ -238,6 +302,7 @@
     initBottomNav();
     initRippleButtons();
     initCardAnimations();
+    initAuth();
   });
 
   // Hide splash when page is fully loaded

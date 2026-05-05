@@ -1091,3 +1091,56 @@ select.form-input { cursor: pointer; }
   .splash-voxel-front { font-size: 64px; }
 }
 
+@media (max-width: 768px) {
+  .top-navbar {
+    align-items: flex-start;
+    height: auto;
+    padding: 12px 14px;
+  }
+
+  .navbar-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .nav-dropdown {
+    top: 84px;
+    right: 8px;
+    width: calc(100% - 16px);
+    max-width: 420px;
+  }
+
+  .main-content {
+    padding: 18px 14px 90px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .quick-action {
+    padding: 14px 12px;
+  }
+
+  .glass-card,
+  .course-item,
+  .assignment-item,
+  .file-card,
+  .skill-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .course-item .course-link,
+  .file-card .dl-btn,
+  .skill-card .btn {
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+
