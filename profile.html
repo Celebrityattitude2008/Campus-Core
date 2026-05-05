@@ -63,30 +63,6 @@
       <p class="text-muted">Loading your profile…</p>
     </div>
 
-    <!-- Guest state -->
-    <div id="guest-card" class="glass-card" style="display:none;">
-      <div class="profile-avatar">
-        <span class="material-symbols-rounded">person</span>
-      </div>
-      <div style="text-align:center;">
-        <h3 style="font-size:22px;font-weight:700;margin-bottom:4px;">Guest User</h3>
-        <p class="text-muted" style="font-size:14px;margin-bottom:20px;">Browse-only mode</p>
-        <div class="warning-box" style="margin-bottom:16px;">
-          ⚠️ You're browsing as a guest. Sign in to unlock all features and save your progress.
-        </div>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-          <a href="login" class="btn btn-primary"><span class="material-symbols-rounded">login</span> Sign In</a>
-          <a href="sign" class="btn btn-secondary"><span class="material-symbols-rounded">person_add</span> Create Account</a>
-        </div>
-      </div>
-
-      <div style="margin-top:24px;">
-        <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#3f19e6">mail</span><span class="text-muted">guest@example.com</span></div>
-        <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#10b981">book</span><span class="text-muted">6 Active Courses</span></div>
-        <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#f59e0b">grade</span><span class="text-muted">CGPA: 3.8</span></div>
-      </div>
-    </div>
-
     <!-- Authenticated state -->
     <div id="user-card" class="glass-card" style="display:none;">
       <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
@@ -200,7 +176,7 @@
     auth.onAuthStateChanged(async (user) => {
       document.getElementById('loading-card').style.display = 'none';
       if (!user) {
-        document.getElementById('guest-card').style.display = 'block';
+        // Redirect handled by biu-design.js
         return;
       }
       document.getElementById('user-card').style.display = 'block';

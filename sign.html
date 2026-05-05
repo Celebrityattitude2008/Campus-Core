@@ -85,20 +85,45 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
+    async function syncUserToSheet(userData) {
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbyV44B-hKwqyIAb1uDmMiLJeFbcLI-lyF_-fKneF9WvVIXg373F7Vw5gLxPhyGV7-s1/exec', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData)
+        });
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Sheet sync failed: ${response.status} ${response.statusText} ${errorText}`);
+        }
+        const result = await response.json();
+        if (result.status !== 'success') {
+          throw new Error(`Sheet sync returned failure: ${JSON.stringify(result)}`);
+        }
+      } catch (syncErr) {
+        console.error('Google Sheets sync error:', syncErr);
+        alert('Account created, but we could not sync to the welcome sheet. Please try again later.');
+      }
+    }
+
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('regBtn');
       btn.disabled = true;
       btn.textContent = 'Creating Account...';
       try {
-        const cred = await auth.createUserWithEmailAndPassword(
-          document.getElementById('regEmail').value,
-          document.getElementById('regPass').value
-        );
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPass').value;
+        const level = document.getElementById('regLevel').value;
+
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        await cred.user.sendEmailVerification();
+
         await db.ref('profiles/' + cred.user.uid).set({
-          fullName: document.getElementById('regName').value,
-          email: document.getElementById('regEmail').value,
-          level: document.getElementById('regLevel').value,
+          fullName: name,
+          email,
+          level,
           verified: false,
           createdAt: Date.now()
         });
@@ -108,16 +133,10 @@
           timestamp: Date.now(),
           type: 'profile'
         });
-        // Sync to Google Sheets and send welcome email
-        await fetch('https://script.google.com/macros/s/AKfycbyV44B-hKwqyIAb1uDmMiLJeFbcLI-lyF_-fKneF9WvVIXg373F7Vw5gLxPhyGV7-s1/exec', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: document.getElementById('regName').value,
-            email: document.getElementById('regEmail').value,
-            level: document.getElementById('regLevel').value
-          })
-        });
+
+        await syncUserToSheet({ name, email, level });
+
+        alert('Account created! A verification email has been sent to your address. Please verify your email before signing in.');
         window.location.href = 'index';
       } catch (err) {
         alert(err.message);
@@ -133,11 +152,15 @@
           const user = result.user;
           const snap = await db.ref('profiles/' + user.uid).once('value');
           if (!snap.exists()) {
+            const name = user.displayName || 'Campus Core Student';
+            const email = user.email;
+            const level = '100L';
+
             await db.ref('profiles/' + user.uid).set({
-              fullName: user.displayName || 'Campus Core Student',
-              email: user.email,
-              level: '100L',
-              verified: false,
+              fullName: name,
+              email,
+              level,
+              verified: user.emailVerified,
               createdAt: Date.now()
             });
             await db.ref('activities/' + user.uid).push({
@@ -146,9 +169,12 @@
               timestamp: Date.now(),
               type: 'profile'
             });
+            await syncUserToSheet({ name, email, level });
           }
           window.location.href = 'index';
-        } catch (err) { alert(err.message); }
+        } catch (err) {
+          alert(err.message);
+        }
       });
     });
   </script>

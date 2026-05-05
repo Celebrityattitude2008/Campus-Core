@@ -26,7 +26,6 @@
   <header class="top-navbar">
     <a href="index" class="navbar-brand">Campus Core</a>
     <div class="navbar-actions">
-      <a href="login" class="guest-badge"><span class="material-symbols-rounded" style="font-size:16px">person_add</span>Guest</a>
       <button class="theme-toggle-btn" id="theme-toggle"><span class="material-symbols-rounded">light_mode</span></button>
       <button class="menu-btn" id="menu-btn"><span class="material-symbols-rounded">menu</span></button>
     </div>
@@ -80,12 +79,11 @@
     auth.onAuthStateChanged(user => {
       currentUser = user;
       if (user) {
-        document.querySelector('.guest-badge').innerHTML = `<span class="material-symbols-rounded" style="font-size:16px">person</span>${user.displayName || 'User'}`;
         if (user.email === 'officialcampuscore@gmail.com') {
           document.getElementById('addNewsBtn').style.display = 'block';
         }
       } else {
-        document.querySelector('.guest-badge').innerHTML = `<span class="material-symbols-rounded" style="font-size:16px">person_add</span>Guest`;
+        // Redirect handled by biu-design.js
       }
       loadNews();
     });

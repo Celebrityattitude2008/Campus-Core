@@ -196,15 +196,14 @@
 
     const auth = firebase.auth();
     auth.onAuthStateChanged(user => {
-      document.querySelectorAll('.guest-badge').forEach(el => {
-        if (user) {
-          el.innerHTML = `<span class="material-symbols-rounded" style="font-size:16px">person</span>${user.displayName || 'Student'}`;
-          el.href = 'profile';
-        } else {
-          el.innerHTML = `<span class="material-symbols-rounded" style="font-size:16px">person_add</span>Guest`;
-          el.href = 'login';
+      if (user) {
+        // User is signed in
+      } else {
+        // No user signed in, redirect to login
+        if (window.location.pathname !== '/login.html' && window.location.pathname !== '/sign.html' && window.location.pathname !== '/resetpassword.html') {
+          window.location.href = 'login';
         }
-      });
+      }
     });
   }
 
@@ -296,14 +295,20 @@
     });
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
+  function initAll() {
     initTheme();
     initMenu();
     initBottomNav();
     initRippleButtons();
     initCardAnimations();
     initAuth();
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
 
   // Hide splash when page is fully loaded
   window.addEventListener('load', () => {

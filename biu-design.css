@@ -381,25 +381,6 @@ html, body {
   gap: 8px;
 }
 
-/* Guest badge */
-.guest-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  background: rgba(63,25,230,0.1);
-  color: #3f19e6;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-[data-theme="dark"] .guest-badge {
-  background: rgba(124,58,237,0.1);
-  color: #7c3aed;
-}
-
 /* Theme toggle button */
 .theme-toggle-btn {
   width: 48px;

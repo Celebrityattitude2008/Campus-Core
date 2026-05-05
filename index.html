@@ -73,16 +73,11 @@
   <header class="top-navbar">
     <a href="index" class="navbar-brand">Campus Core</a>
     <div class="navbar-actions">
-      <a href="login" class="guest-badge" id="signin-badge">
-        <span class="material-symbols-rounded" style="font-size:16px">person_add</span>
-        Sign In
-      </a>
       <button class="theme-toggle-btn" id="theme-toggle">
         <span class="material-symbols-rounded">light_mode</span>
       </button>
       <button class="menu-btn" id="menu-btn">
-        <span class="material-symbols-rounded">menu</span>
-      </button>
+        <span class="material-symbols-rounded">menu</span></button>
     </div>
   </header>
 
@@ -138,10 +133,10 @@
     <!-- Welcome Card -->
     <div class="welcome-card">
       <div class="welcome-greeting">Good day</div>
-      <div class="welcome-name" id="welcome-name">Welcome, Guest!</div>
+      <div class="welcome-name" id="welcome-name">Loading...</div>
       <div class="welcome-status">
         <span class="material-symbols-rounded" style="font-size:14px;">circle</span>
-        <span id="welcome-status">Browsing as guest</span>
+        <span id="welcome-status">Please wait</span>
       </div>
     </div>
 
@@ -281,7 +276,6 @@
 
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        document.getElementById('signin-badge').style.display = 'none';
         const snap = await db.ref('profiles/' + user.uid).once('value');
         const p = snap.val() || {};
         const name = p.fullName || user.displayName || 'Student';
@@ -292,11 +286,7 @@
         document.getElementById('stat-courses').textContent = p.courseCount || (Array.isArray(p.courses) ? p.courses.length : '—');
         loadRecentActivity(user.uid);
       } else {
-        document.getElementById('welcome-name').textContent = 'Welcome, Guest!';
-        document.getElementById('welcome-status').textContent = 'Browsing as guest';
-        document.getElementById('stat-cgpa').textContent = '—';
-        document.getElementById('stat-courses').textContent = '—';
-        renderActivityPlaceholder('Sign in to see your activity history.');
+        // Redirect handled by biu-design.js
       }
     });
 
