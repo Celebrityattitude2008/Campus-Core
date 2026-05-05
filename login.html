@@ -63,10 +63,10 @@
       </button>
 
       <div class="auth-footer">
-        <a href="sign.html" class="auth-link">Don't have an account? Sign up</a>
+        <a href="sign" class="auth-link">Don't have an account? Sign up</a>
       </div>
       <div class="auth-footer" style="margin-top:8px;">
-        <a href="resetpassword.html" class="auth-link" style="color:var(--text-muted);font-weight:400;">Forgot password?</a>
+        <a href="resetpassword" class="auth-link" style="color:var(--text-muted);font-weight:400;">Forgot password?</a>
       </div>
     </div>
   </div>
@@ -90,7 +90,7 @@
           document.getElementById('loginEmail').value,
           document.getElementById('loginPass').value
         );
-        window.location.href = 'index.html';
+        window.location.href = 'index';
       } catch (err) {
         alert(err.message);
         btn.disabled = false;
@@ -102,7 +102,7 @@
       btn.addEventListener('click', async () => {
         try {
           await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-          window.location.href = 'index.html';
+          window.location.href = 'index';
         } catch (err) { alert(err.message); }
       });
     });

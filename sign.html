@@ -71,7 +71,7 @@
       </button>
 
       <div class="auth-footer">
-        Already have an account? <a href="login.html" class="auth-link">Sign In</a>
+        Already have an account? <a href="login" class="auth-link">Sign In</a>
       </div>
     </div>
   </div>
@@ -118,7 +118,7 @@
             level: document.getElementById('regLevel').value
           })
         });
-        window.location.href = 'index.html';
+        window.location.href = 'index';
       } catch (err) {
         alert(err.message);
         btn.disabled = false;
@@ -147,7 +147,7 @@
               type: 'profile'
             });
           }
-          window.location.href = 'index.html';
+          window.location.href = 'index';
         } catch (err) { alert(err.message); }
       });
     });
