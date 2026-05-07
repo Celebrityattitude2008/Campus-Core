@@ -12,8 +12,15 @@
     [data-theme="dark"] .thread-card { background:rgba(0,0,0,0.2); }
     .thread-card:hover { background:rgba(255,255,255,0.35); transform:translateX(4px); }
     .thread-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; color:white; flex-shrink:0; font-weight:700; }
-    .thread-meta { font-size:12px; color:var(--text-muted); margin-top:4px; display:flex; gap:12px; }
+    .thread-meta { font-size:12px; color:var(--text-muted); margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; }
     .tag { display:inline-flex; align-items:center; padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; }
+    #post-modal { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px; }
+    #post-modal.open { display:flex; }
+    .modal-card { width:100%; max-width:480px; background:var(--bg); border-radius:var(--radius-lg); padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:page-enter 0.3s ease-out; }
+    .modal-input { width:100%; padding:12px 16px; border-radius:var(--radius-md); border:1px solid var(--border-color); background:rgba(255,255,255,0.3); color:var(--text-main); font-family:inherit; font-size:14px; outline:none; margin-bottom:12px; }
+    [data-theme="dark"] .modal-input { background:rgba(0,0,0,0.2); }
+    .modal-input:focus { border-color:#3f19e6; box-shadow:0 0 0 3px rgba(63,25,230,0.15); }
+    .modal-textarea { min-height:100px; resize:vertical; }
   </style>
 </head>
 <body class="page-body">
@@ -41,7 +48,7 @@
     <a href="subscriptions" class="dropdown-item">Subscriptions</a>
     <a href="admin" class="dropdown-item">Admin Panel</a>
     <div class="dropdown-divider"></div>
-    <a href="privacy.html" class="dropdown-item">Privacy Policy</a>
+    <a href="privacy" class="dropdown-item">Privacy Policy</a>
     <a href="support" class="dropdown-item">Support</a>
   </nav>
   <main class="main-content">
@@ -50,67 +57,17 @@
         <h1 class="page-title">Discussions</h1>
         <p class="page-subtitle">Join conversations with fellow students</p>
       </div>
-      <button class="btn btn-primary" onclick="alert('Sign in to create a post!')">
+      <button class="btn btn-primary" id="new-post-btn" onclick="openPostModal()">
         <span class="material-symbols-rounded">add</span> New Post
       </button>
     </div>
 
-    <div class="warning-box" style="margin-bottom:16px;">
-      ⚠️ <a href="login" style="color:#3f19e6;font-weight:600;">Sign in</a> to participate in discussions and create posts.
-    </div>
-
     <div class="glass-card">
       <h3 style="font-weight:700;margin-bottom:14px;font-size:16px;">Recent Threads</h3>
-
-      <div class="thread-card">
-        <div class="thread-avatar" style="background:linear-gradient(135deg,#3f19e6,#0ea5e9);">C</div>
-        <div style="flex:1;">
-          <div style="font-weight:600;font-size:14px;">Best resources for MTH 201 exam prep?</div>
-          <div class="thread-meta">
-            <span>By ChukwuLove</span>
-            <span>23 replies</span>
-            <span>2h ago</span>
-          </div>
-          <span class="tag" style="background:rgba(63,25,230,0.1);color:#3f19e6;margin-top:6px;">Mathematics</span>
-        </div>
-      </div>
-
-      <div class="thread-card">
-        <div class="thread-avatar" style="background:linear-gradient(135deg,#10b981,#0ea5e9);">A</div>
-        <div style="flex:1;">
-          <div style="font-weight:600;font-size:14px;">Study group for Computer Science 300L</div>
-          <div class="thread-meta">
-            <span>By AdeolaDev</span>
-            <span>8 replies</span>
-            <span>5h ago</span>
-          </div>
-          <span class="tag" style="background:rgba(16,185,129,0.1);color:#10b981;margin-top:6px;">Study Group</span>
-        </div>
-      </div>
-
-      <div class="thread-card">
-        <div class="thread-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">F</div>
-        <div style="flex:1;">
-          <div style="font-weight:600;font-size:14px;">How to handle multiple assignment deadlines?</div>
-          <div class="thread-meta">
-            <span>By FaithOkeke</span>
-            <span>15 replies</span>
-            <span>1d ago</span>
-          </div>
-          <span class="tag" style="background:rgba(245,158,11,0.1);color:#f59e0b;margin-top:6px;">Tips & Advice</span>
-        </div>
-      </div>
-
-      <div class="thread-card">
-        <div class="thread-avatar" style="background:linear-gradient(135deg,#7c3aed,#0ea5e9);">E</div>
-        <div style="flex:1;">
-          <div style="font-weight:600;font-size:14px;">Looking for BIO 101 past questions — 2023</div>
-          <div class="thread-meta">
-            <span>By EmmaBioSci</span>
-            <span>4 replies</span>
-            <span>2d ago</span>
-          </div>
-          <span class="tag" style="background:rgba(124,58,237,0.1);color:#7c3aed;margin-top:6px;">Resources</span>
+      <div id="threads-container">
+        <div style="text-align:center;padding:24px;color:var(--text-muted);">
+          <span class="material-symbols-rounded" style="font-size:32px;display:block;margin-bottom:8px;">hourglass_empty</span>
+          Loading discussions…
         </div>
       </div>
     </div>
@@ -122,8 +79,158 @@
     <a href="chatbot" class="nav-item" data-page="chatbot"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
     <a href="profile" class="nav-item" data-page="profile"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
   </nav>
+
+  <!-- New Post Modal -->
+  <div id="post-modal">
+    <div class="modal-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-weight:700;font-size:17px;">New Discussion Post</h3>
+        <button onclick="closePostModal()" style="border:none;background:none;cursor:pointer;font-size:22px;color:var(--text-muted);">✕</button>
+      </div>
+      <input type="text" class="modal-input" id="post-title" placeholder="Thread title…" maxlength="100">
+      <textarea class="modal-input modal-textarea" id="post-body" placeholder="Share your thoughts, questions or ideas…" maxlength="500"></textarea>
+      <select class="modal-input" id="post-tag">
+        <option value="General">General</option>
+        <option value="Mathematics">Mathematics</option>
+        <option value="Science">Science</option>
+        <option value="Study Group">Study Group</option>
+        <option value="Resources">Resources</option>
+        <option value="Tips & Advice">Tips & Advice</option>
+        <option value="Tech">Tech</option>
+      </select>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" id="post-submit-btn" onclick="submitPost()"><span class="material-symbols-rounded">send</span> Post</button>
+        <button class="btn btn-secondary" onclick="closePostModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="/config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    let currentUser = null;
+    const avatarColors = ['#3f19e6,#0ea5e9','#10b981,#0ea5e9','#f59e0b,#ef4444','#7c3aed,#0ea5e9','#ec4899,#7c3aed'];
+
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      loadThreads();
+    });
+
+    function loadThreads() {
+      db.ref('discussions').orderByChild('timestamp').limitToLast(30).on('value', snapshot => {
+        const data = snapshot.val() || {};
+        renderThreads(data);
+      });
+    }
+
+    function renderThreads(data) {
+      const container = document.getElementById('threads-container');
+      const entries = Object.entries(data).sort((a, b) => b[1].timestamp - a[1].timestamp);
+
+      if (entries.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted);">No discussions yet. Be the first to start a conversation!</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      entries.forEach(([id, thread]) => {
+        const colorPair = avatarColors[Math.abs(thread.authorName.charCodeAt(0)) % avatarColors.length];
+        const initial = (thread.authorName || '?')[0].toUpperCase();
+        const timeAgo = formatTime(thread.timestamp);
+        const tagColor = getTagColor(thread.tag);
+        const div = document.createElement('div');
+        div.className = 'thread-card';
+        div.innerHTML = `
+          <div class="thread-avatar" style="background:linear-gradient(135deg,${colorPair});">${initial}</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">${escHtml(thread.title)}</div>
+            <div class="thread-meta">
+              <span>By ${escHtml(thread.authorName)}</span>
+              <span>${timeAgo}</span>
+            </div>
+            ${thread.body ? `<div style="font-size:13px;color:var(--text-muted);margin-top:6px;line-height:1.5;">${escHtml(thread.body.substring(0, 120))}${thread.body.length > 120 ? '…' : ''}</div>` : ''}
+            <span class="tag" style="background:${tagColor.bg};color:${tagColor.text};margin-top:6px;">${escHtml(thread.tag || 'General')}</span>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function escHtml(str) {
+      return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function formatTime(ts) {
+      const diff = Date.now() - ts;
+      const m = Math.floor(diff / 60000);
+      const h = Math.floor(diff / 3600000);
+      const d = Math.floor(diff / 86400000);
+      if (m < 1) return 'Just now';
+      if (m < 60) return m + 'm ago';
+      if (h < 24) return h + 'h ago';
+      return d + 'd ago';
+    }
+
+    function getTagColor(tag) {
+      const map = {
+        'Mathematics': { bg: 'rgba(63,25,230,0.1)', text: '#3f19e6' },
+        'Science': { bg: 'rgba(16,185,129,0.1)', text: '#10b981' },
+        'Study Group': { bg: 'rgba(16,185,129,0.1)', text: '#10b981' },
+        'Resources': { bg: 'rgba(124,58,237,0.1)', text: '#7c3aed' },
+        'Tips & Advice': { bg: 'rgba(245,158,11,0.1)', text: '#f59e0b' },
+        'Tech': { bg: 'rgba(14,165,233,0.1)', text: '#0ea5e9' },
+      };
+      return map[tag] || { bg: 'rgba(63,25,230,0.1)', text: '#3f19e6' };
+    }
+
+    function openPostModal() {
+      if (!currentUser) { window.location.href = 'login'; return; }
+      document.getElementById('post-modal').classList.add('open');
+      document.getElementById('post-title').focus();
+    }
+
+    function closePostModal() {
+      document.getElementById('post-modal').classList.remove('open');
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-body').value = '';
+    }
+
+    async function submitPost() {
+      if (!currentUser) return;
+      const title = document.getElementById('post-title').value.trim();
+      const body = document.getElementById('post-body').value.trim();
+      const tag = document.getElementById('post-tag').value;
+      if (!title) { document.getElementById('post-title').focus(); return; }
+
+      const btn = document.getElementById('post-submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span> Posting…';
+
+      try {
+        const snap = await db.ref('profiles/' + currentUser.uid).once('value');
+        const profile = snap.val() || {};
+        const authorName = profile.fullName || currentUser.displayName || currentUser.email.split('@')[0];
+
+        await db.ref('discussions').push({ title, body, tag, authorName, timestamp: Date.now(), uid: currentUser.uid });
+        closePostModal();
+      } catch (err) {
+        alert('Error posting: ' + err.message);
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-rounded">send</span> Post';
+    }
+
+    document.getElementById('post-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('post-modal')) closePostModal();
+    });
+  </script>
 </body>
 </html>
-
-
-

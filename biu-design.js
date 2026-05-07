@@ -196,13 +196,16 @@
 
     const auth = firebase.auth();
     auth.onAuthStateChanged(user => {
+      const path = window.location.pathname;
+      const authPaths = ['/login.html', '/sign.html', '/resetpassword.html', '/login', '/sign', '/resetpassword'];
+      const isAuthPage = authPaths.some(p => path === p || path.endsWith(p));
+
       if (user) {
-        // User is signed in
+        if (isAuthPage) {
+          window.location.href = 'index';
+        }
       } else {
-        // No user signed in, redirect to login unless on auth pages
-        const path = window.location.pathname;
-        const authPaths = ['/login.html', '/sign.html', '/resetpassword.html', '/login', '/sign', '/resetpassword'];
-        if (!authPaths.includes(path)) {
+        if (!isAuthPage) {
           window.location.href = 'login';
         }
       }

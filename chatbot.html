@@ -58,7 +58,7 @@
     <a href="subscriptions" class="dropdown-item">Subscriptions</a>
     <a href="admin" class="dropdown-item">Admin Panel</a>
     <div class="dropdown-divider"></div>
-    <a href="privacy.html" class="dropdown-item">Privacy Policy</a>
+    <a href="privacy" class="dropdown-item">Privacy Policy</a>
     <a href="support" class="dropdown-item">Support</a>
   </nav>
   <main class="main-content">
@@ -100,14 +100,9 @@
     const auth = firebase.auth();
 
     auth.onAuthStateChanged(user => {
-      if (!user) {
-        // SSO: Prompt to sign in via chatbot
-        addMessage("Welcome to Campus Core AI Assistant! To get personalized help, please sign in first.", true);
-        addMessage("You can sign in with Google or email/password. Let's get you authenticated!", false);
-        // Redirect or show login
-        setTimeout(() => window.location.href = 'login', 3000);
-      } else {
-        addMessage("Hello " + user.displayName + "! How can I assist you today?", false);
+      if (user) {
+        const name = user.displayName ? user.displayName.split(' ')[0] : 'there';
+        addMessage("Hello " + name + "! How can I assist you today? Ask me anything about your courses, CGPA, campus resources, or study tips. 📚", false);
       }
     });
 

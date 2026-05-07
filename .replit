@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "web", "python-3.11"]
+modules = ["web", "nodejs-20", "python-3.12"]
 [agent]
 expertMode = true
 stack = "BEST_EFFORT_FALLBACK"
@@ -18,41 +18,25 @@ author = "agent"
 task = "workflow.run"
 args = "Start application"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "BIU Hub Static"
-
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd 'UI UX UPGRADES' && pnpm run dev"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
 
-[[workflows.workflow]]
-name = "BIU Hub Static"
-author = "agent"
-
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 -m http.server 3000"
-waitForPort = 3000
-
-[workflows.workflow.metadata]
-outputType = "console"
+args = "npm run dev"
+waitForPort = 5000
 
 [[ports]]
 localPort = 3000
-externalPort = 3001
+externalPort = 80
 
 [[ports]]
 localPort = 5000
-externalPort = 80
+externalPort = 5000
 
 [deployment]
 deploymentTarget = "static"

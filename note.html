@@ -24,6 +24,8 @@
     .modal-card { width:100%; max-width:480px; background:var(--bg); border-radius:var(--radius-lg); padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:page-enter 0.3s ease-out; }
     .modal-title-input { width:100%; border:none; background:transparent; font-size:18px; font-weight:700; color:var(--text-main); font-family:inherit; outline:none; margin-bottom:12px; }
     .modal-body-input { width:100%; border:none; background:transparent; font-size:14px; color:var(--text-main); font-family:inherit; outline:none; resize:none; min-height:120px; }
+    .delete-note-btn { position:absolute; top:10px; right:10px; width:28px; height:28px; border-radius:50%; border:none; background:rgba(239,68,68,0.15); color:#ef4444; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.2s; }
+    .note-card:hover .delete-note-btn { opacity:1; }
   </style>
 </head>
 <body class="page-body">
@@ -51,7 +53,7 @@
     <a href="subscriptions" class="dropdown-item">Subscriptions</a>
     <a href="admin" class="dropdown-item">Admin Panel</a>
     <div class="dropdown-divider"></div>
-    <a href="privacy.html" class="dropdown-item">Privacy Policy</a>
+    <a href="privacy" class="dropdown-item">Privacy Policy</a>
     <a href="support" class="dropdown-item">Support</a>
   </nav>
   <main class="main-content">
@@ -66,31 +68,11 @@
     </div>
     <div class="glass-card">
       <div class="notes-grid" id="notes-grid">
-        <div class="note-card" onclick="viewNote('MTH 201 — Differentiation Rules','Chain rule: d/dx[f(g(x))] = f\'(g(x))·g\'(x)\n\nProduct rule: d/dx[uv] = u\'v + uv\'\n\nQuotient rule: d/dx[u/v] = (u\'v - uv\') / v²')">
-          <div class="note-color" style="background:#3f19e6;"></div>
-          <div class="note-title" style="padding-left:8px;">MTH 201 — Differentiation Rules</div>
-          <div class="note-preview" style="padding-left:8px;">Chain rule, product rule, quotient rule…</div>
-          <div class="note-date" style="padding-left:8px;">May 1, 2025</div>
+        <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-muted);" id="notes-loading">
+          <span class="material-symbols-rounded" style="font-size:32px;display:block;margin-bottom:8px;">hourglass_empty</span>
+          Loading your notes…
         </div>
-        <div class="note-card" onclick="viewNote('CSC 305 — Binary Trees','A binary tree is a tree data structure where each node has at most two children (left and right). Used in BST, heaps, expression trees.')">
-          <div class="note-color" style="background:#10b981;"></div>
-          <div class="note-title" style="padding-left:8px;">CSC 305 — Binary Trees</div>
-          <div class="note-preview" style="padding-left:8px;">Tree structure, BST, heaps, traversal…</div>
-          <div class="note-date" style="padding-left:8px;">Apr 28, 2025</div>
-        </div>
-        <div class="note-card" onclick="viewNote('BIO 101 — Cell Structure','Prokaryotic cells lack a membrane-bound nucleus. Eukaryotic cells have a nucleus and organelles. Key organelles: mitochondria (ATP), ribosomes (protein synthesis).')">
-          <div class="note-color" style="background:#f59e0b;"></div>
-          <div class="note-title" style="padding-left:8px;">BIO 101 — Cell Structure</div>
-          <div class="note-preview" style="padding-left:8px;">Prokaryotes vs eukaryotes, organelles…</div>
-          <div class="note-date" style="padding-left:8px;">Apr 25, 2025</div>
-        </div>
-        <div class="note-card" onclick="viewNote('ENG 210 — Literary Devices','Metaphor, simile, alliteration, onomatopoeia, personification, irony, foreshadowing, symbolism. These devices enrich text and convey deeper meaning.')">
-          <div class="note-color" style="background:#7c3aed;"></div>
-          <div class="note-title" style="padding-left:8px;">ENG 210 — Literary Devices</div>
-          <div class="note-preview" style="padding-left:8px;">Metaphor, simile, alliteration…</div>
-          <div class="note-date" style="padding-left:8px;">Apr 20, 2025</div>
-        </div>
-        <button class="add-note-btn" onclick="openModal()">
+        <button class="add-note-btn" id="add-btn" onclick="openModal()" style="display:none;">
           <span class="material-symbols-rounded" style="font-size:28px;">add_circle</span>
           <span style="font-size:12px;font-weight:600;">New Note</span>
         </button>
@@ -116,47 +98,143 @@
       <div style="height:1px;background:var(--border-color);margin-bottom:12px;"></div>
       <textarea class="modal-body-input" id="modal-body" placeholder="Start writing…"></textarea>
       <div style="display:flex;gap:8px;margin-top:16px;">
-        <button class="btn btn-primary" onclick="saveNote()"><span class="material-symbols-rounded">save</span> Save</button>
+        <button class="btn btn-primary" id="modal-save-btn" onclick="saveNote()"><span class="material-symbols-rounded">save</span> Save</button>
         <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn" id="modal-delete-btn" onclick="deleteCurrentNote()" style="display:none;background:rgba(239,68,68,0.1);color:#ef4444;margin-left:auto;">
+          <span class="material-symbols-rounded">delete</span>
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- Firebase -->
+  <script src="/config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
-    let editMode = false;
-    function openModal(title='', body='') {
-      editMode = !!title;
-      document.getElementById('modal-heading').textContent = editMode ? 'View Note' : 'New Note';
-      document.getElementById('modal-title').value = title;
-      document.getElementById('modal-body').value = body;
-      document.getElementById('note-modal').classList.add('open');
-    }
-    function closeModal() { document.getElementById('note-modal').classList.remove('open'); }
-    function viewNote(t, b) { openModal(t, b); }
+    if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
     const colors = ['#3f19e6','#10b981','#f59e0b','#7c3aed','#ec4899','#ef4444'];
-    function saveNote() {
-      const title = document.getElementById('modal-title').value.trim();
-      const body = document.getElementById('modal-body').value.trim();
-      if (!title) return;
-      const color = colors[Math.floor(Math.random()*colors.length)];
+    let currentUser = null;
+    let editingNoteId = null;
+
+    auth.onAuthStateChanged(user => {
+      currentUser = user;
+      if (user) {
+        loadNotes(user.uid);
+      }
+    });
+
+    function loadNotes(uid) {
+      db.ref('notes/' + uid).on('value', snapshot => {
+        const data = snapshot.val() || {};
+        renderNotes(data);
+      });
+    }
+
+    function renderNotes(data) {
+      const grid = document.getElementById('notes-grid');
+      const addBtn = document.getElementById('add-btn');
+      document.getElementById('notes-loading').style.display = 'none';
+      addBtn.style.display = '';
+
+      const cards = grid.querySelectorAll('.note-card');
+      cards.forEach(c => c.remove());
+
+      const notes = Object.entries(data).sort((a, b) => b[1].createdAt - a[1].createdAt);
+
+      if (notes.length === 0) {
+        const empty = document.createElement('div');
+        empty.id = 'notes-empty';
+        empty.style.cssText = 'grid-column:1/-1;text-align:center;padding:24px;color:var(--text-muted);';
+        empty.innerHTML = '<span class="material-symbols-rounded" style="font-size:32px;display:block;margin-bottom:8px;">sticky_note_2</span>No notes yet. Create your first note!';
+        grid.insertBefore(empty, addBtn);
+      } else {
+        const emptyEl = document.getElementById('notes-empty');
+        if (emptyEl) emptyEl.remove();
+        notes.forEach(([id, note]) => {
+          const card = createNoteCard(id, note);
+          grid.insertBefore(card, addBtn);
+        });
+      }
+    }
+
+    function createNoteCard(id, note) {
       const card = document.createElement('div');
       card.className = 'note-card';
-      card.onclick = () => viewNote(title, body);
-      card.innerHTML = `<div class="note-color" style="background:${color};"></div>
-        <div class="note-title" style="padding-left:8px;">${title}</div>
-        <div class="note-preview" style="padding-left:8px;">${body.substring(0,60)}…</div>
-        <div class="note-date" style="padding-left:8px;">Just now</div>`;
-      const grid = document.getElementById('notes-grid');
-      const addBtn = grid.querySelector('.add-note-btn');
-      grid.insertBefore(card, addBtn);
+      card.dataset.id = id;
+      card.onclick = (e) => {
+        if (!e.target.closest('.delete-note-btn')) openModal(id, note);
+      };
+      const color = note.color || '#3f19e6';
+      const date = note.createdAt ? new Date(note.createdAt).toLocaleDateString('en-NG', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now';
+      card.innerHTML = `
+        <div class="note-color" style="background:${color};"></div>
+        <button class="delete-note-btn" onclick="deleteNote('${id}')"><span class="material-symbols-rounded" style="font-size:14px;">close</span></button>
+        <div class="note-title" style="padding-left:8px;">${note.title}</div>
+        <div class="note-preview" style="padding-left:8px;">${(note.body || '').substring(0,80)}…</div>
+        <div class="note-date" style="padding-left:8px;">${date}</div>
+      `;
+      return card;
+    }
+
+    function openModal(id, note) {
+      editingNoteId = id || null;
+      document.getElementById('modal-heading').textContent = id ? 'Edit Note' : 'New Note';
+      document.getElementById('modal-title').value = note ? note.title : '';
+      document.getElementById('modal-body').value = note ? note.body : '';
+      document.getElementById('modal-delete-btn').style.display = id ? '' : 'none';
+      document.getElementById('note-modal').classList.add('open');
+      document.getElementById('modal-title').focus();
+    }
+
+    function closeModal() {
+      document.getElementById('note-modal').classList.remove('open');
+      editingNoteId = null;
+    }
+
+    async function saveNote() {
+      if (!currentUser) return;
+      const title = document.getElementById('modal-title').value.trim();
+      const body = document.getElementById('modal-body').value.trim();
+      if (!title) { document.getElementById('modal-title').focus(); return; }
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      const btn = document.getElementById('modal-save-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span> Saving…';
+
+      try {
+        if (editingNoteId) {
+          await db.ref('notes/' + currentUser.uid + '/' + editingNoteId).update({ title, body });
+        } else {
+          await db.ref('notes/' + currentUser.uid).push({ title, body, color, createdAt: Date.now() });
+        }
+        closeModal();
+      } catch (err) {
+        alert('Error saving note: ' + err.message);
+      }
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-rounded">save</span> Save';
+    }
+
+    async function deleteNote(id) {
+      if (!currentUser || !confirm('Delete this note?')) return;
+      await db.ref('notes/' + currentUser.uid + '/' + id).remove();
+    }
+
+    async function deleteCurrentNote() {
+      if (!editingNoteId) return;
+      await deleteNote(editingNoteId);
       closeModal();
     }
+
     document.getElementById('note-modal').addEventListener('click', (e) => {
       if (e.target === document.getElementById('note-modal')) closeModal();
     });
   </script>
 </body>
 </html>
-
-
-

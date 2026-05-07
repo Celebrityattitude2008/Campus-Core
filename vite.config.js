@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
-import { readdirSync, readFileSync, writeFileSync } from 'fs'
+import { readdirSync, readFileSync } from 'fs'
 
 const pageFiles = readdirSync(new URL('.', import.meta.url))
   .filter(file => file.endsWith('.html'))
@@ -10,15 +10,13 @@ const pageFiles = readdirSync(new URL('.', import.meta.url))
     return pages
   }, {})
 
-// Plugin to inject environment variables into config.js
 const injectEnvPlugin = {
   name: 'inject-env',
   apply: 'build',
   async generateBundle() {
     const configPath = resolve(new URL('.', import.meta.url).pathname, 'config.js')
     let configContent = readFileSync(configPath, 'utf-8')
-    
-    // Replace placeholders with environment variables
+
     configContent = configContent
       .replace(/__VITE_FIREBASE_API_KEY__/g, process.env.VITE_FIREBASE_API_KEY || '')
       .replace(/__VITE_FIREBASE_AUTH_DOMAIN__/g, process.env.VITE_FIREBASE_AUTH_DOMAIN || '')
@@ -29,8 +27,7 @@ const injectEnvPlugin = {
       .replace(/__VITE_FIREBASE_APP_ID__/g, process.env.VITE_FIREBASE_APP_ID || '')
       .replace(/__VITE_FIREBASE_MEASUREMENT_ID__/g, process.env.VITE_FIREBASE_MEASUREMENT_ID || '')
       .replace(/__VITE_GEMINI_API_KEY__/g, process.env.VITE_GEMINI_API_KEY || '')
-    
-    // Emit the config file to the dist folder
+
     this.emitFile({
       type: 'asset',
       fileName: 'config.js',
@@ -43,9 +40,9 @@ export default defineConfig({
   root: '.',
   plugins: [injectEnvPlugin],
   server: {
-    port: 3000,
+    port: 5000,
     host: '0.0.0.0',
-    allowedHosts: 'all',
+    allowedHosts: true,
     strictPort: false
   },
   build: {

@@ -1,81 +1,68 @@
 # Campus Core
 
-A comprehensive student platform for Benson Idahosa University students.
+A comprehensive student platform for Benson Idahosa University (BIU) students.
 
-## Architecture
+## Run & Operate
 
-Two parallel servers run concurrently:
+- **Dev server**: `npm run dev` (port 5000)
+- **Build**: `npm run build` → outputs to `dist/`
+- **Required env vars**: None (Firebase config is embedded in `config.js`)
 
-1. **React App** (`UI UX UPGRADES/`) — Port 5000 (external: 80)
-   - A reference/showcase React + Vite app demonstrating the UI/UX design system
-   - Run via: `cd 'UI UX UPGRADES' && pnpm run dev`
+## Stack
 
-2. **HTML Static Pages** (root `/`) — Port 3000
-   - The actual BIU Archive platform in plain HTML/CSS/JS
-   - Run via: `python3 -m http.server 3000`
+- **Frontend**: Plain HTML + CSS + vanilla JS (multi-page)
+- **Build tool**: Vite 6.3.5 (multi-page input, all `*.html` files)
+- **Auth/DB**: Firebase (Auth + Realtime Database) v9.23.0 compat SDK
+- **Runtime**: Node.js 20
 
-## Shared Design System
+## Where things live
 
-All HTML pages use two shared files:
-- `biu-design.css` — Full design system: CSS variables, glassmorphism cards, animated blobs, top navbar, bottom nav, auth pages, splash screen, ripple buttons, stat grid
-- `biu-design.js` — Shared JS: VoxelText splash screen, theme toggle, dropdown menu, bottom nav active state, ripple buttons, card animations
+- `index.html` — main dashboard (entry point)
+- `biu-design.css` / `biu-design.js` — shared design system (all pages use these)
+- `unified-design-system.css` — alternate design tokens
+- `config.js` — Firebase config (client-side, public credentials)
+- `brain.js` — chatbot response logic
+- `vite.config.js` — Vite multi-page build config (port 5000)
 
-## HTML Pages (21 files)
+## Architecture decisions
 
-| Page | File | Description |
-|------|------|-------------|
-| Dashboard | `index.html` | Main hub with welcome card, stats, quick actions, activity feed |
-| Login | `login.html` | Firebase auth sign-in |
-| Sign Up | `sign.html` | Firebase auth registration |
-| Reset Password | `resetpassword.html` | Firebase password reset |
-| Profile | `profile.html` | Firebase auth profile with edit modal |
-| View Profile | `viewprofile.html` | Public profile viewer (UID from query params) |
-| CGPA Calculator | `cgpa.html` | Grade point calculator |
-| AI Chatbot | `chatbot.html` | Mock AI study assistant |
-| Discussions | `discussions.html` | Community forum threads |
-| Assignments | `assignment.html` | Task tracker with completion toggle |
-| Calendar | `calendar.html` | Monthly calendar with events |
-| Downloads | `download.html` | File resource library |
-| Hall of Fame | `hall.html` | Leaderboard with podium |
-| News | `news.html` | Campus news feed |
-| Notes | `note.html` | Personal notes with modal editor |
-| Past Questions | `pq.html` | Searchable exam paper archive |
-| SkillSwap | `skillswap.html` | Peer skill exchange marketplace |
-| Subscriptions | `subscriptions.html` | Free/Pro/Gold tier plans |
-| Admin | `admin.html` | Admin command center |
-| Privacy Policy | `privacy.html` | Privacy policy document |
-| Support | `support.html` | FAQ + contact methods |
+- Multi-page HTML app (not a SPA) — each `.html` file is a separate Vite entry point
+- Firebase client credentials are embedded directly in `config.js` (safe — Firebase security is enforced via Firebase Security Rules, not secret keys)
+- Vite dev server runs on port 5000 to match Replit's webview port requirement
+- Firebase compat SDK loaded via CDN per-page; `config.js` sets `window.firebaseConfig`
 
-## Design Features
+## Product
 
-- **Glassmorphism**: `backdrop-filter: blur()` cards with semi-transparent backgrounds
-- **Animated Blobs**: Three floating gradient orbs in the background on every page
-- **Top Navbar**: Gradient "BIU Archive" brand, guest badge, theme toggle, menu button
-- **Bottom Nav**: 5-item nav (Home, Calendar, Notes, AI Chat, Profile) with active state
-- **Dark/Light Mode**: Persisted to localStorage via CSS custom properties
-- **Ripple Buttons**: Material-style click ripple effect on all `.btn` elements
-- **Splash Screen**: VoxelText "CAMPUS CORE" with layered 3D effect + progress bar
-- **Auth Pages**: Liquid wave, animated blobs, glassmorphism card with gradient avatar
+| Page | Description |
+|------|-------------|
+| Dashboard (`index.html`) | Main hub with welcome card, stats, quick actions |
+| Login / Sign Up / Reset | Firebase auth flows |
+| Profile / View Profile | Firebase Realtime Database user profiles |
+| CGPA Calculator | Grade point calculator |
+| AI Chatbot | Study assistant using Gemini API |
+| Discussions / Assignments / Calendar | Student productivity tools |
+| Downloads / Past Questions | Resource library |
+| Hall of Fame / News | Campus leaderboard and news feed |
+| Notes / SkillSwap | Personal notes and peer skill exchange |
+| Subscriptions | Free/Pro/Gold tier plans |
+| Admin | Admin command center |
 
-## Firebase Config
+## User preferences
 
-- **Project**: `campus-core-7ca30`
-- **API Key**: `AIzaSyDvSFDc8V_u9pqICK-FH_S8tZTPi-p16gU`
-- **Database URL**: `https://campus-core-7ca30-default-rtdb.firebaseio.com`
-- Auth pages use Firebase Auth SDK v9.23.0 (compat)
-- Profile and viewprofile pages use Firebase Realtime Database
+- Keep the existing multi-page HTML structure — do not convert to a React SPA
 
-## Standard Page Template
+## Gotchas
 
-```html
-<body class="page-body">
-  <div class="animated-bg"> <!-- 3 blobs --> </div>
-  <header class="top-navbar"> <!-- brand + actions --> </header>
-  <nav class="nav-dropdown" id="nav-dropdown"> <!-- all page links --> </nav>
-  <main class="main-content"> <!-- page content --> </main>
-  <nav class="bottom-nav"> <!-- 5 items --> </nav>
-</body>
-```
+- `config.js` is loaded via `<script src="/config.js">` in each page before Firebase SDKs
+- The Gemini API key (`geminiApiKey`) in `config.js` must be filled in for the AI chatbot to work
+- All HTML pages reference `/biu-design.css` and `/biu-design.js` as shared assets
+- `temp_index.html` is a draft page — not part of main navigation
+- All internal hrefs use extensionless paths (e.g. `href="privacy"` not `href="privacy.html"`) — Vite resolves these correctly
+- Notes stored under `notes/<uid>/` in Firebase; Discussions under `discussions/`; SkillSwap under `skillswap/`
+- `biu-design.js` `initAuthState()` redirects unauthenticated users to `login` AND redirects already-logged-in users away from auth pages to `index`
 
-Auth pages use `<body class="auth-body">` with a `.liquid-wave` element.
+## Pointers
 
+- Firebase project: `campus-core-7ca30`
+- Firebase Realtime Database: `https://campus-core-7ca30-default-rtdb.firebaseio.com`
+- Skills: `.local/skills/workflows/SKILL.md`, `.local/skills/environment-secrets/SKILL.md`
