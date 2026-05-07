@@ -136,23 +136,23 @@
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('biu-theme', theme);
-    const btn = document.getElementById('theme-toggle');
-    if (btn) {
-      btn.querySelector('.material-symbols-rounded').textContent =
-        theme === 'dark' ? 'dark_mode' : 'light_mode';
-    }
+    // Icon shows what you'll switch TO (opposite of current)
+    const icon = theme === 'dark' ? 'light_mode' : 'dark_mode';
+    document.querySelectorAll('#theme-toggle .material-symbols-rounded').forEach(el => {
+      el.textContent = icon;
+    });
   }
 
   function initTheme() {
     const saved = localStorage.getItem('biu-theme') || 'light';
     applyTheme(saved);
-    const btn = document.getElementById('theme-toggle');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        const current = document.documentElement.dataset.theme;
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('#theme-toggle');
+      if (btn) {
+        const current = document.documentElement.dataset.theme || 'light';
         applyTheme(current === 'dark' ? 'light' : 'dark');
-      });
-    }
+      }
+    });
   }
 
   /* ---- 3. DROPDOWN MENU ---- */
