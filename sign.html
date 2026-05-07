@@ -393,7 +393,7 @@
 
     async function syncUserToSheet(userData) {
       try {
-        const url = new URL('https://script.google.com/macros/s/AKfycbyV44B-hKwqyIAb1uDmMiLJeFbcLI-lyF_-fKneF9WvVIXg373F7Vw5gLxPhyGV7-s1/exec');
+        const url = new URL('https://script.google.com/macros/s/AKfycbzxtbtqYuuEVZxfSCWUk_Hwx55zSpExWoq8SMVdn8OkUgV6XEfo8f-_OPHg3mO2Rf3T/exec');
         Object.entries(userData).forEach(([k, v]) => url.searchParams.set(k, v));
         await fetch(url.toString(), { method: 'GET', mode: 'no-cors' });
       } catch (syncErr) {
