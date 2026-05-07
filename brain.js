@@ -6,65 +6,64 @@ let memoryTimer = null;
 const localBrain = {
     // GREETINGS & IDENTITY
     "hi": ["Hey there! Ready to crush some courses today?", "Yo! What's the move for today?", "Greetings! How can I help you today?"],
-    "hello": ["Hi! I'm the Campus Core assistant. How can I help you navigate campus life?", "Hello! Looking for something specific on the Hub?"],
+    "hello": ["Hi! I'm the Campus Core assistant. How can I help you navigate campus life?", "Hello! Looking for something specific on Campus Core?"],
     "hey": ["Hey! What's on your mind? I'm here to help you out.", "Hey! How's the semester going?"],
     "good morning": ["Good morning! Grab some breakfast and let's get this degree.", "Morning! Ready for those 8 AMs?"],
     "who are you": ["I'm the Campus Core AI. Think of me as your digital guide to CGPA, past questions, and campus survival."],
     "help": ["I can help with: 1. CGPA Calculations, 2. Library resources, 3. School fees, 4. Hostels. What do you need?"],
 
     // ACADEMICS
-    "cgpa": ["BIU uses a 5.0 scale. To stay on First Class, you need a 4.50+. 2.1 is 3.50-4.49. Keep grinding!", "Aiming for a 5.0? You've got this!"],
-    "grading": ["Our grading system: A(70-100)=5pts, B(60-69)=4pts, C(50-59)=3pts, D(45-49)=2pts, E(40-44)=1pt, F(0-39)=0pts."],
+    "cgpa": ["Nigerian universities use a 5.0 scale. First Class requires 4.50+, Second Class Upper is 3.50–4.49. Keep grinding!", "Aiming for a 5.0? You've got this!"],
+    "grading": ["The standard Nigerian grading system: A(70-100)=5pts, B(60-69)=4pts, C(50-59)=3pts, D(45-49)=2pts, E(40-44)=1pt, F(0-39)=0pts."],
     "gpa": ["Your GPA is for one semester, while CGPA is the average of all semesters combined. Use our calculator to see your projected score!"],
     "carryover": ["Don't panic! A carry-over just means you have to retake the course. Focus on your current courses and clear it next time."],
     "it": ["Industrial Training (IT) usually happens in 300L or 400L depending on your department. Start looking for a firm early!"],
-    "probation": ["If your CGPA falls below 1.50, you might be placed on academic probation. Use the hub to find study partners and level up!"],
-    "result": ["Results are typically uploaded to the portal after Senate approval. Keep checking portal.biu.edu.ng."],
+    "probation": ["If your CGPA falls below 1.50, you might be placed on academic probation. Use Campus Core to find study partners and level up!"],
+    "result": ["Results are typically uploaded to your university portal after Senate approval. Keep checking your official student portal."],
     "timetable": ["Timetables are usually distributed by course reps or posted on notice boards. Don't miss those 8 AMs!"],
-    "exam": ["Exam season? Head to the Library section of this hub to download past questions and start prepping early."],
-    "assignment": ["Stuck? Check the Hub's discussion board to see if your coursemates are brainstorming, or ask the Study AI."],
-    "library": ["The University Library is the best place for deep work. It usually opens 8 AM - 9 PM. Remember, silence is golden!"],
-    "fees": ["School fees should be paid through the official portal. Always save your transaction reference!", "Make sure you use portal.biu.edu.ng for all fee payments."],
+    "exam": ["Exam season? Head to the Downloads section to grab past questions and start prepping early."],
+    "assignment": ["Stuck? Check the Discussions board to see if your coursemates are brainstorming, or ask the Study AI."],
+    "library": ["Your university library is the best place for deep work. Most open 8 AM - 9 PM. Remember, silence is golden!"],
+    "fees": ["School fees should be paid through your official university portal. Always save your transaction reference!", "Make sure you use your university's official portal for all fee payments."],
 
     // DEPARTMENTS & FACULTIES
-    "law": ["The Faculty of Law is one of our pride and joys. Keep those robes clean and your cases sharp!"],
-    "engineering": ["The Faculty of Engineering is located at the main campus. Future builders of Nigeria!"],
-    "science": ["Shoutout to the Faculty of Science! From Microbiology to Computer Science, you guys are the backbone of innovation."],
-    "social science": ["Economics, Mass Comm, Sociology... The Faculty of Social Sciences is always buzzing with energy."],
-    "agriculture": ["Faculty of Agriculture! Feeding the nation and driving sustainable innovation. Keep up the great work."],
+    "law": ["Law students — keep those robes clean and your cases sharp!"],
+    "engineering": ["Future builders of Nigeria! The Faculty of Engineering has you covered."],
+    "science": ["Shoutout to Science students! From Microbiology to Computer Science, you are the backbone of innovation."],
+    "social science": ["Economics, Mass Comm, Sociology... Social Sciences is always buzzing with energy."],
+    "agriculture": ["Faculty of Agriculture — feeding the nation and driving sustainable innovation. Keep up the great work."],
 
     // CAMPUS LOGISTICS
-    "portal": ["The official portal for course registration and result checking is: https://portal.biu.edu.ng"],
+    "portal": ["Log in to your university's official student portal for course registration and result checking."],
     "hostel": ["Issues with your room? Visit the Student Affairs office or speak with your Hall Warden immediately."],
-    "chapel": ["Chapel attendance is mandatory and vital for your growth. Check your student handbook for required credits."],
-    "health center": ["The clinic is open 24/7 for students. If you're feeling unwell, don't wait—go get checked out."],
-    "clinic": ["The university clinic is available 24/7. Your health comes first, please visit them if you feel sick."],
+    "chapel": ["Check your student handbook for chapel or assembly attendance requirements at your university."],
+    "health center": ["The campus clinic is available for students. If you're feeling unwell, don't wait — go get checked out."],
+    "clinic": ["Your university clinic is available for students. Your health comes first, please visit them if you feel sick."],
     "security": ["Stay safe! The security post is always manned. Report emergencies to the nearest officer or warden."],
     "wifi": ["Campus Wi-Fi details are usually provided during clearance. If your login fails, visit the ICT center."],
 
     // MONEY & FEES
     "bursary": ["The Bursary office handles all financial clearances. Make sure you get your official receipts after payment."],
     "clearance": ["Financial and academic clearance is required before exams. Start early to avoid the long queues!"],
-    "scholarship": ["BIU offers various scholarships. Check the Student Affairs office for merit-based or founder's scholarship requirements."],
-    "payment proof": ["Take a clear photo of your bank teller or screenshot your transfer and upload it to the 'Verify' section."],
+    "scholarship": ["Check the Student Affairs office for merit-based or institutional scholarship requirements."],
+    "payment proof": ["Take a clear photo of your bank teller or screenshot your transfer and keep it safe as proof of payment."],
 
     // FOOD & LIFESTYLE
-    "food": ["Hungry? You've got the Cafeteria, the Buttery, and various kiosks. Don't skip breakfast!"],
+    "food": ["Hungry? Check out the cafeteria, buttery, and campus kiosks. Don't skip breakfast!"],
     "buttery": ["The buttery is the go-to for quick snacks and drinks. Perfect for late-night study cravings."],
-    "shuttle": ["Campus shuttles run between Heritage and Legacy campuses. Keep some change handy for the fare."],
-    "clothes": ["Remember the BIU dress code! Modesty and professionalism are the standards here."],
+    "shuttle": ["Campus shuttles usually run between key campus locations. Keep some change handy for the fare."],
     "stressed": ["Uni can be overwhelming. It's okay to feel stressed. Take a breather or visit the counseling unit."],
     "tired": ["Burnout is real. Rest is productive too! Make sure you are drinking water and sleeping."],
 
     // SMALL TALK
     "how are you": ["I'm functioning at 100%! Ready to help you graduate with honors.", "I'm great! Just processing data and waiting for your questions."],
-    "thanks": ["You're welcome! Go make BIU proud.", "No problem at all! Anything else?"],
+    "thanks": ["You're welcome! Go make your university proud.", "No problem at all! Anything else?"],
     "cool": ["I know, right? I try my best.", "Glad you think so!"],
-    "benson idahosa": ["Archbishop Benson Idahosa was a pioneer of faith. He wanted leaders with 'Fire in their bones'!"],
 
-    // TECH SUPPORT
-    "developer": ["This Hub was built by Paul Adamu to make BIU life easier for everyone."],
-    "errors": ["If you find a bug, please report it to the admin via the contact section."],
+    // CAMPUS CORE SPECIFIC
+    "campus core": ["Campus Core is your all-in-one student hub — CGPA calculator, AI assistant, discussions, past questions and more!"],
+    "developer": ["Campus Core was built to make student life easier for Nigerian university students everywhere."],
+    "errors": ["If you find a bug, please report it to the admin via the Support section."],
     "offline": ["If I'm acting slow, it might be your network. Try refreshing the page!"]
 };
 
@@ -72,16 +71,16 @@ const localBrain = {
 const contextBrain = {
     "library": {
         "location": "The main library is centrally located, easily accessible from most faculties.",
-        "time": "It's open from 8 AM to 9 PM on weekdays.",
-        "link": "Check the 'Library' tab on this Hub for digital resources!"
+        "time": "Most university libraries open from 8 AM to 9 PM on weekdays.",
+        "link": "Check the Downloads tab on Campus Core for digital resources!"
     },
     "fees": {
         "location": "The Bursary office is in the Administration block for physical inquiries.",
-        "time": "Payments are open 24/7 on the portal, but try to pay before exams!",
-        "link": "https://portal.biu.edu.ng"
+        "time": "Payments are open 24/7 on the portal, but try to pay before exam deadlines!",
+        "link": "Use your university's official student portal for fee payments."
     },
     "clinic": {
-        "location": "The University Health Center is located near the student hostels.",
+        "location": "The University Health Center is usually located near the student hostels.",
         "time": "The clinic is open 24/7 for emergencies.",
         "link": "Report to your warden if it's a late-night emergency."
     }
@@ -124,5 +123,5 @@ function getBotResponse(userInput) {
     }
 
     // D. Fallback if no keywords are found
-    return "I'm not quite sure about that yet. Try asking about 'CGPA', 'Library', or 'Fees', or check the Student Affairs office!";
+    return "I'm not quite sure about that yet. Try asking about 'CGPA', 'Library', or 'Fees', or check with your Student Affairs office!";
 }

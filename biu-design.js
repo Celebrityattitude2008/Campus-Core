@@ -41,7 +41,7 @@
       </div>
     `;
     document.body.insertBefore(splash, document.body.firstChild);
-    buildVoxelWords(['BIU', 'ARCHIVE']);
+    buildVoxelWords(['CAMPUS', 'CORE']);
   }
 
   function buildVoxelWords(words) {

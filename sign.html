@@ -393,11 +393,9 @@
 
     async function syncUserToSheet(userData) {
       try {
-        await fetch('https://script.google.com/macros/s/AKfycbyV44B-hKwqyIAb1uDmMiLJeFbcLI-lyF_-fKneF9WvVIXg373F7Vw5gLxPhyGV7-s1/exec', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(userData)
-        });
+        const url = new URL('https://script.google.com/macros/s/AKfycbyV44B-hKwqyIAb1uDmMiLJeFbcLI-lyF_-fKneF9WvVIXg373F7Vw5gLxPhyGV7-s1/exec');
+        Object.entries(userData).forEach(([k, v]) => url.searchParams.set(k, v));
+        await fetch(url.toString(), { method: 'GET', mode: 'no-cors' });
       } catch (syncErr) {
         console.warn('Sheet sync skipped:', syncErr.message);
       }

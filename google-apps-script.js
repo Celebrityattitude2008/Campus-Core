@@ -1,77 +1,122 @@
-// Google Apps Script code to send welcome emails when new user added to Google Sheet
-// This script assumes the sheet has columns: Timestamp, Name, Email, Level
+// Google Apps Script — Campus Core user sync
+// Sheet columns: Timestamp | Name | Email | University | Department | Level | EmailSent
+// Deploy as Web App: Execute as Me, Anyone can access (no sign-in required)
 
 function sendWelcomeEmail() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const data = sheet.getDataRange().getValues();
 
-  // Assuming first row is headers
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
-    const timestamp = row[0];
     const name = row[1];
     const email = row[2];
-    const level = row[3];
+    const university = row[3];
+    const department = row[4];
+    const level = row[5];
 
-    // Check if email sent (assume column 5 is 'EmailSent')
-    if (row[4] !== 'Sent') {
-      // Send email
+    if (row[6] !== 'Sent') {
       const subject = 'Welcome to Campus Core!';
       const body = `Dear ${name},
 
-Welcome to Campus Core! We're excited to have you join our community.
+Welcome to Campus Core! We're excited to have you join our student community.
 
 Your account details:
 - Name: ${name}
 - Email: ${email}
+- University: ${university}
+- Department: ${department}
 - Level: ${level}
 
-If you have any questions, feel free to reach out.
+If you have any questions, reach out at support@campuscore.app.
 
 Best regards,
 Campus Core Team`;
 
       MailApp.sendEmail(email, subject, body);
-
-      // Mark as sent
-      sheet.getRange(i + 1, 5).setValue('Sent');
+      sheet.getRange(i + 1, 7).setValue('Sent');
     }
   }
 }
 
-// To trigger automatically, set up a time-driven trigger for sendWelcomeEmail
-
-// Alternatively, for real-time, use a doPost function if calling from Firebase
-function doPost(e) {
-  const data = JSON.parse(e.postData.contents);
+// doGet handles requests from the frontend (no CORS preflight unlike POST+JSON)
+function doGet(e) {
+  const params = e.parameter || {};
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-  // Append new user
-  sheet.appendRow([new Date(), data.name, data.email, data.level, 'Pending']);
+  sheet.appendRow([
+    new Date(),
+    params.name || '',
+    params.email || '',
+    params.university || '',
+    params.department || '',
+    params.level || '',
+    'Pending'
+  ]);
 
-  // Send email immediately
   const subject = 'Welcome to Campus Core!';
-  const body = `Dear ${data.name},
+  const body = `Dear ${params.name},
 
-Welcome to Campus Core! We're excited to have you join our community.
+Welcome to Campus Core! We're excited to have you join our student community.
 
 Your account details:
-- Name: ${data.name}
-- Email: ${data.email}
-- Level: ${data.level}
+- Name: ${params.name}
+- Email: ${params.email}
+- University: ${params.university}
+- Department: ${params.department}
+- Level: ${params.level}
 
-If you have any questions, feel free to reach out.
+If you have any questions, reach out at support@campuscore.app.
 
 Best regards,
 Campus Core Team`;
 
-  MailApp.sendEmail(data.email, subject, body);
-
-  // Mark as sent
-  const lastRow = sheet.getLastRow();
-  sheet.getRange(lastRow, 5).setValue('Sent');
+  if (params.email) {
+    MailApp.sendEmail(params.email, subject, body);
+    const lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 7).setValue('Sent');
+  }
 
   return ContentService
-    .createTextOutput(JSON.stringify({status: 'success'}))
+    .createTextOutput(JSON.stringify({ status: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// doPost kept for compatibility — now also handles university/department
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  sheet.appendRow([
+    new Date(),
+    data.name || '',
+    data.email || '',
+    data.university || '',
+    data.department || '',
+    data.level || '',
+    'Pending'
+  ]);
+
+  const subject = 'Welcome to Campus Core!';
+  const body = `Dear ${data.name},
+
+Welcome to Campus Core!
+
+- Name: ${data.name}
+- Email: ${data.email}
+- University: ${data.university}
+- Department: ${data.department}
+- Level: ${data.level}
+
+Best regards,
+Campus Core Team`;
+
+  if (data.email) {
+    MailApp.sendEmail(data.email, subject, body);
+    const lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 7).setValue('Sent');
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: 'success' }))
     .setMimeType(ContentService.MimeType.JSON);
 }

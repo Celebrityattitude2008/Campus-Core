@@ -108,7 +108,7 @@
         const card = document.createElement('div');
         card.className = 'news-card';
         card.innerHTML = `
-          <span class="news-tag" style="background:rgba(63,25,230,0.12);color:#3f19e6;">${n.tag || '📢 Announcement'}</span>
+          <span class="news-tag" style="background:rgba(63,25,230,0.12);color:#3f19e6;">${n.tag || 'Announcement'}</span>
           <div class="news-title">${n.title}</div>
           <div class="news-body">${n.body}</div>
           <div class="news-footer">
@@ -136,13 +136,13 @@
     document.getElementById('addNewsBtn').onclick = () => {
       const title = prompt('News title:');
       const body = prompt('News content:');
-      const tag = prompt('Tag (e.g., 📢 Announcement):');
+      const tag = prompt('Tag (e.g., Announcement, Event, Notice):');
       const author = prompt('Author:');
       if (title && body) {
         db.ref('news').push({
           title,
           body,
-          tag: tag || '📢 Announcement',
+          tag: tag || 'Announcement',
           author: author || 'Campus Core',
           timestamp: Date.now()
         });
