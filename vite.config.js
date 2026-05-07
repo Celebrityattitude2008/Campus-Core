@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
-import { readdirSync, readFileSync } from 'fs'
+import { readdirSync } from 'fs'
 
 const pageFiles = readdirSync(new URL('.', import.meta.url))
   .filter(file => file.endsWith('.html'))
@@ -10,28 +10,36 @@ const pageFiles = readdirSync(new URL('.', import.meta.url))
     return pages
   }, {})
 
+function buildConfigContent() {
+  return `
+// Configuration loaded from environment variables
+
+const firebaseConfig = {
+  apiKey: "${process.env.VITE_FIREBASE_API_KEY || ''}",
+  authDomain: "${process.env.VITE_FIREBASE_AUTH_DOMAIN || ''}",
+  databaseURL: "${process.env.VITE_FIREBASE_DATABASE_URL || ''}",
+  projectId: "${process.env.VITE_FIREBASE_PROJECT_ID || ''}",
+  storageBucket: "${process.env.VITE_FIREBASE_STORAGE_BUCKET || ''}",
+  messagingSenderId: "${process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || ''}",
+  appId: "${process.env.VITE_FIREBASE_APP_ID || ''}",
+  measurementId: "${process.env.VITE_FIREBASE_MEASUREMENT_ID || ''}"
+};
+
+const geminiApiKey = "${process.env.VITE_GEMINI_API_KEY || ''}";
+
+window.firebaseConfig = firebaseConfig;
+window.geminiApiKey = geminiApiKey;
+`
+}
+
 const injectEnvPlugin = {
   name: 'inject-env',
   apply: 'build',
   async generateBundle() {
-    const configPath = resolve(new URL('.', import.meta.url).pathname, 'config.js')
-    let configContent = readFileSync(configPath, 'utf-8')
-
-    configContent = configContent
-      .replace(/__VITE_FIREBASE_API_KEY__/g, process.env.VITE_FIREBASE_API_KEY || '')
-      .replace(/__VITE_FIREBASE_AUTH_DOMAIN__/g, process.env.VITE_FIREBASE_AUTH_DOMAIN || '')
-      .replace(/__VITE_FIREBASE_DATABASE_URL__/g, process.env.VITE_FIREBASE_DATABASE_URL || '')
-      .replace(/__VITE_FIREBASE_PROJECT_ID__/g, process.env.VITE_FIREBASE_PROJECT_ID || '')
-      .replace(/__VITE_FIREBASE_STORAGE_BUCKET__/g, process.env.VITE_FIREBASE_STORAGE_BUCKET || '')
-      .replace(/__VITE_FIREBASE_MESSAGING_SENDER_ID__/g, process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '')
-      .replace(/__VITE_FIREBASE_APP_ID__/g, process.env.VITE_FIREBASE_APP_ID || '')
-      .replace(/__VITE_FIREBASE_MEASUREMENT_ID__/g, process.env.VITE_FIREBASE_MEASUREMENT_ID || '')
-      .replace(/__VITE_GEMINI_API_KEY__/g, process.env.VITE_GEMINI_API_KEY || '')
-
     this.emitFile({
       type: 'asset',
       fileName: 'config.js',
-      source: configContent
+      source: buildConfigContent()
     })
   }
 }

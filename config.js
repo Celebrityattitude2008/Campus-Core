@@ -1,26 +1,18 @@
 
 // Configuration loaded from environment variables
-// These are injected at build time by Vite
 
 const firebaseConfig = {
-  apiKey: "__VITE_FIREBASE_API_KEY__",
-  authDomain: "__VITE_FIREBASE_AUTH_DOMAIN__",
-  databaseURL: "__VITE_FIREBASE_DATABASE_URL__",
-  projectId: "__VITE_FIREBASE_PROJECT_ID__",
-  storageBucket: "__VITE_FIREBASE_STORAGE_BUCKET__",
-  messagingSenderId: "__VITE_FIREBASE_MESSAGING_SENDER_ID__",
-  appId: "__VITE_FIREBASE_APP_ID__",
-  measurementId: "__VITE_FIREBASE_MEASUREMENT_ID__"
+  apiKey: "AIzaSyDvSFDc8V_u9pqICK-FH_S8tZTPi-p16gU",
+  authDomain: "campus-core-7ca30.firebaseapp.com",
+  databaseURL: "https://campus-core-7ca30-default-rtdb.firebaseio.com",
+  projectId: "campus-core-7ca30",
+  storageBucket: "campus-core-7ca30.appspot.com",
+  messagingSenderId: "197537030755",
+  appId: "1:197537030755:web:3a1437008b0da42842ce56",
+  measurementId: "",
 };
 
-const geminiApiKey = "__VITE_GEMINI_API_KEY__";
+const geminiApiKey = "AIzaSyBC1OqnM47myCSKXE0zy61GnqKjVb6413Y";
 
-// Check if running in a Node environment or browser
-const isNodeEnvironment = typeof module !== 'undefined' && module.exports;
-
-if (isNodeEnvironment) {
-  module.exports = { firebaseConfig, geminiApiKey };
-} else {
-  window.firebaseConfig = firebaseConfig;
-  window.geminiApiKey = geminiApiKey;
-}
+window.firebaseConfig = firebaseConfig;
+window.geminiApiKey = geminiApiKey;
