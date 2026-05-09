@@ -29,6 +29,7 @@
   --border-dark: #334155;
 
   --bg: var(--bg-light);
+  --bg-secondary: #ffffff;
   --card-bg: var(--card-bg-light);
   --text-main: var(--text-light);
   --text-muted: var(--text-muted-light);
@@ -50,6 +51,7 @@
 
 [data-theme="dark"] {
   --bg: var(--bg-dark);
+  --bg-secondary: #1e293b;
   --card-bg: var(--card-bg-dark);
   --text-main: var(--text-dark);
   --text-muted: var(--text-muted-dark);

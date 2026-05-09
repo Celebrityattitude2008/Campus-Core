@@ -94,6 +94,15 @@
     <a href="chatbot.html" class="nav-item" data-page="chatbot"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
     <a href="profile.html" class="nav-item" data-page="profile"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
   </nav>
+  <script src="config.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script>
+    if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) window.location.href = 'login.html';
+    });
+  </script>
 </body>
 </html>
 
