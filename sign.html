@@ -136,7 +136,7 @@
 
     async function syncUserToSheet(userData) {
       try {
-        const url = new URL('https://script.google.com/macros/s/AKfycbyKArHKzmiXS7VtaP9Vlr3XZzhYxsPKTmsxG71vyR_WYFuaD5GufQ86CmHUlibuSQR9/exec');
+        const url = new URL('https://script.google.com/macros/s/AKfycbyoe_FQdwgGTBRSqMmPyBn3CbJTh0xdTGKSsQuG704WLyGDr9yf_fl7hDtrDGY1c6pG/exec');
         url.searchParams.set('name', userData.name || '');
         url.searchParams.set('email', userData.email || '');
         url.searchParams.set('university', userData.university || '');
