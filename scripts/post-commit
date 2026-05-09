@@ -1,19 +1,24 @@
 #!/bin/sh
-# Automatically push to GitHub after every commit
-# Requires GITHUB_PERSONAL_ACCESS_TOKEN environment variable
+# Automatically push to GitHub after every commit.
+# Uses GIT_ASKPASS to supply credentials securely — no token embedded in URLs.
+# Requires: GITHUB_PERSONAL_ACCESS_TOKEN environment variable.
 
 if [ -z "$GITHUB_PERSONAL_ACCESS_TOKEN" ]; then
   echo "[github-sync] Skipping: GITHUB_PERSONAL_ACCESS_TOKEN is not set."
   exit 0
 fi
 
-REPO="Celebrityattitude2008/Campus-Core"
-REMOTE_URL="https://${GITHUB_PERSONAL_ACCESS_TOKEN}@github.com/${REPO}.git"
-
 BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || echo "main")
 
+SCRIPT_DIR="$(git rev-parse --show-toplevel)/scripts"
+ASKPASS_SCRIPT="$SCRIPT_DIR/git-askpass.sh"
+
+if [ ! -x "$ASKPASS_SCRIPT" ]; then
+  chmod +x "$ASKPASS_SCRIPT" 2>/dev/null
+fi
+
 echo "[github-sync] Pushing branch '${BRANCH}' to GitHub..."
-if git push "$REMOTE_URL" "$BRANCH" --quiet 2>&1; then
+if GIT_ASKPASS="$ASKPASS_SCRIPT" git push origin "$BRANCH" --quiet 2>&1; then
   echo "[github-sync] Successfully pushed to GitHub."
 else
   echo "[github-sync] Push failed. Your commit is saved locally — run 'npm run sync' to retry."

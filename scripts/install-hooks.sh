@@ -12,6 +12,7 @@ fi
 
 cp "$SCRIPTS_DIR/post-commit" "$HOOKS_DIR/post-commit"
 chmod +x "$HOOKS_DIR/post-commit"
+chmod +x "$SCRIPTS_DIR/git-askpass.sh"
 
 echo "Git hooks installed successfully."
 echo "Every commit will now automatically push to GitHub."
