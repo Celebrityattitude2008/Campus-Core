@@ -134,23 +134,20 @@
     const auth = firebase.auth();
     const db = firebase.database();
 
-    const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyh0RKbZuqx0W3Z6LtRZ00xBD5fMB5usDdBmJ9OluUWMtkaT4zQDDYaw1B-38j9aZ-2/exec';
+    const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwDszBEXY5TYQekw1OIv_U3QrMHBzeQLM6wVbmiQbv7RO31NFnOr6nT8-S2cobNz2z/exec';
 
-    async function syncUserToSheet(userData) {
+    function syncUserToSheet(userData) {
       try {
-        const body = new URLSearchParams({
-          name: userData.name || '',
-          email: userData.email || '',
-          university: userData.university || '',
-          department: userData.department || '',
-          level: userData.level || ''
-        });
-        await fetch(SHEET_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: body.toString()
-        });
+        const url = new URL(SHEET_SCRIPT_URL);
+        url.searchParams.set('name',       userData.name       || '');
+        url.searchParams.set('email',      userData.email      || '');
+        url.searchParams.set('university', userData.university || '');
+        url.searchParams.set('department', userData.department || '');
+        url.searchParams.set('level',      userData.level      || '');
+        // Image ping bypasses CORS entirely — browser always fires the GET
+        // request without restrictions, so Apps Script doGet receives all params.
+        const ping = new Image();
+        ping.src = url.toString();
       } catch (syncErr) {
         console.error('Google Sheets sync error:', syncErr);
       }
@@ -177,6 +174,9 @@
           return;
         }
 
+        // Block biu-design.js from redirecting before profile is saved
+        window.__signupInProgress = true;
+
         const cred = await auth.createUserWithEmailAndPassword(email, password);
         await cred.user.sendEmailVerification();
 
@@ -196,11 +196,14 @@
           type: 'profile'
         });
 
-        await syncUserToSheet({ name, email, level, university, department });
+        syncUserToSheet({ name, email, level, university, department });
+
+        window.__signupInProgress = false;
 
         alert('Account created! A verification email has been sent to your address. Please verify your email before signing in.');
         window.location.href = 'index.html';
       } catch (err) {
+        window.__signupInProgress = false;
         alert(err.message);
         btn.disabled = false;
         btn.textContent = 'Create Account';

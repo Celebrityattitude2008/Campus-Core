@@ -222,6 +222,9 @@
 
     const auth = firebase.auth();
     auth.onAuthStateChanged(user => {
+      // If signup is in progress, don't redirect — profile hasn't been saved yet
+      if (window.__signupInProgress) return;
+
       const path = window.location.pathname || window.location.href;
       const authPage = isAuthPage(path);
 
