@@ -76,6 +76,7 @@
           document.getElementById('view-info').innerHTML = `
             <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#3f19e6">mail</span><span>${p.email || 'Private'}</span></div>
             <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#10b981">school</span><span>${p.level || 'Level unknown'}</span></div>
+            <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#06b6d4">home_work</span><span>${p.university || 'University not specified'}</span></div>
             <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#f59e0b">verified</span><span>${p.verified ? 'Verified Student' : 'Pending verification'}</span></div>
           `;
         } else {

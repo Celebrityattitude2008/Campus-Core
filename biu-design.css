@@ -809,27 +809,6 @@ select.form-input { cursor: pointer; }
    AUTH PAGES (Login / Sign Up / Reset)
    ============================================================ */
 
-.auth-theme-btn {
-  position: fixed;
-  top: 16px; right: 16px;
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, #f59e0b, #0ea5e9);
-  color: white;
-  font-size: 22px;
-  z-index: 999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transition: transform var(--transition-fast), background var(--transition-base);
-}
-[data-theme="dark"] .auth-theme-btn {
-  background: linear-gradient(135deg, #0ea5e9, #7c3aed);
-}
-.auth-theme-btn:hover { transform: scale(1.1); }
-.auth-theme-btn:active { transform: scale(0.9); }
-
 .auth-body {
   min-height: 100vh;
   display: flex;

@@ -70,7 +70,7 @@
       <div class="chat-messages" id="chat-messages">
         <div class="msg-row">
           <div class="msg-avatar"><span class="material-symbols-rounded">smart_toy</span></div>
-          <div class="msg-bubble">Hello! I'm your Campus Core Study Assistant. Ask me anything about your courses, academic life, or campus resources. How can I help you today?</div>
+          <div class="msg-bubble">Hello! I'm your Campus Core Study Assistant. Ask me anything about your courses, academic life, or campus resources. How can I help you today? 📚</div>
         </div>
       </div>
       <div class="typing" id="typing-indicator">
@@ -102,17 +102,17 @@
     auth.onAuthStateChanged(user => {
       if (user) {
         const name = user.displayName ? user.displayName.split(' ')[0] : 'there';
-        addMessage("Hello " + name + "! How can I assist you today? Ask me anything about your courses, CGPA, campus resources, or study tips.", false);
+        addMessage("Hello " + name + "! How can I assist you today? Ask me anything about your courses, CGPA, campus resources, or study tips. 📚", false);
       }
     });
 
     const responses = [
-      "That's a great question! I'd suggest reviewing your course materials and past questions for that topic.",
-      "For CGPA improvement, focus on understanding core concepts, attend all lectures, and form study groups with classmates.",
-      "Your university library resources may be available online through your student portal. You can access journals, textbooks, and past question papers.",
-      "Remember to check the academic calendar for important dates like exam schedules, registration deadlines, and holiday breaks.",
-      "Study tip: Break your study sessions into 25-minute focused blocks (Pomodoro technique) with 5-minute breaks in between.",
-      "I'm here to help with your academic journey at Campus Core! Feel free to ask about any course or campus resource.",
+      "That's a great question! Based on BIU academic guidelines, I'd suggest reviewing your course materials and past questions for that topic. 📖",
+      "For CGPA improvement, focus on understanding core concepts, attend all lectures, and form study groups with classmates. 🎯",
+      "BIU Library resources are available online through the student portal. You can access journals, textbooks, and past question papers. 📚",
+      "Remember to check the academic calendar for important dates like exam schedules, registration deadlines, and holiday breaks. 📅",
+      "Study tip: Break your study sessions into 25-minute focused blocks (Pomodoro technique) with 5-minute breaks in between. ⏱️",
+      "I'm here to help with your academic journey at Campus Core! Feel free to ask about any course or campus resource. 🏫",
     ];
     function addMessage(text, isUser=false) {
       const messages = document.getElementById('chat-messages');

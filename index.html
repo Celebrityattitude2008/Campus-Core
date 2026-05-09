@@ -281,7 +281,11 @@
         const name = p.fullName || user.displayName || 'Student';
         const first = name.split(' ')[0];
         document.getElementById('welcome-name').textContent = 'Welcome back, ' + first + '!';
-        document.getElementById('welcome-status').textContent = (p.level || '') + ' · ' + (p.department || 'BIU Student');
+        const statusParts = [];
+        if (p.level) statusParts.push(p.level);
+        if (p.department) statusParts.push(p.department);
+        if (p.university) statusParts.push(p.university);
+        document.getElementById('welcome-status').textContent = statusParts.length > 0 ? statusParts.join(' · ') : 'BIU Student';
         document.getElementById('stat-cgpa').textContent = p.cgpa || '—';
         document.getElementById('stat-courses').textContent = p.courseCount || (Array.isArray(p.courses) ? p.courses.length : '—');
         loadRecentActivity(user.uid);
