@@ -6,8 +6,8 @@
   <title>Campus Core — My Profile</title>
   <link rel="stylesheet" href="biu-design.css">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/>
-  <script src="/universities.js"></script>
-  <script src="/biu-design.js" defer></script>
+  <script src="universities.js"></script>
+  <script src="biu-design.js" defer></script>
   <style>
     .edit-btn { width:36px; height:36px; border-radius:50%; border:none; background:rgba(255,255,255,0.2); color:var(--text-main); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; transition:background 0.2s; }
     .edit-btn:hover { background:rgba(63,25,230,0.15); color:#3f19e6; }
@@ -33,26 +33,26 @@
     <div class="animated-blob blob-3"></div>
   </div>
   <header class="top-navbar">
-    <a href="index" class="navbar-brand">Campus Core</a>
+    <a href="index.html" class="navbar-brand">Campus Core</a>
     <div class="navbar-actions">
       <button class="theme-toggle-btn" id="theme-toggle"><span class="material-symbols-rounded">light_mode</span></button>
       <button class="menu-btn" id="menu-btn"><span class="material-symbols-rounded">menu</span></button>
     </div>
   </header>
   <nav class="nav-dropdown" id="nav-dropdown">
-    <a href="cgpa" class="dropdown-item">CGPA Calculator</a>
-    <a href="assignment" class="dropdown-item">Assignments</a>
-    <a href="discussions" class="dropdown-item">Discussions</a>
-    <a href="download" class="dropdown-item">Downloads</a>
+    <a href="cgpa.html" class="dropdown-item">CGPA Calculator</a>
+    <a href="assignment.html" class="dropdown-item">Assignments</a>
+    <a href="discussions.html" class="dropdown-item">Discussions</a>
+    <a href="download.html" class="dropdown-item">Downloads</a>
     <a href="hall" class="dropdown-item">Hall of Fame</a>
-    <a href="news" class="dropdown-item">News Feed</a>
-    <a href="pq" class="dropdown-item">Past Questions</a>
-    <a href="skillswap" class="dropdown-item">SkillSwap</a>
-    <a href="subscriptions" class="dropdown-item">Subscriptions</a>
-    <a href="admin" class="dropdown-item">Admin Panel</a>
+    <a href="news.html" class="dropdown-item">News Feed</a>
+    <a href="pq.html" class="dropdown-item">Past Questions</a>
+    <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
+    <a href="subscriptions.html" class="dropdown-item">Subscriptions</a>
+    <a href="admin.html" class="dropdown-item">Admin Panel</a>
     <div class="dropdown-divider"></div>
-    <a href="privacy" class="dropdown-item">Privacy Policy</a>
-    <a href="support" class="dropdown-item">Support</a>
+    <a href="privacy.html" class="dropdown-item">Privacy Policy</a>
+    <a href="support.html" class="dropdown-item">Support</a>
     <div class="dropdown-divider"></div>
     <button onclick="signOut()" class="dropdown-item dropdown-danger">
       <span class="material-symbols-rounded">logout</span> Sign Out
@@ -116,19 +116,19 @@
       <div class="glass-card delay-1">
         <h3 style="font-weight:700;font-size:16px;margin-bottom:14px;">Quick Links</h3>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
-          <a href="cgpa" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
+          <a href="cgpa.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
             <div class="icon-box icon-blue" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">calculate</span></div>
             CGPA Calc
           </a>
-          <a href="assignment" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
+          <a href="assignment.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
             <div class="icon-box icon-amber" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">assignment</span></div>
             Assignments
           </a>
-          <a href="download" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
+          <a href="download.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
             <div class="icon-box icon-green" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">download</span></div>
             Downloads
           </a>
-          <a href="subscriptions" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
+          <a href="subscriptions.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
             <div class="icon-box icon-purple" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">star</span></div>
             Upgrade
           </a>
@@ -143,11 +143,11 @@
 
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
-    <a href="index" class="nav-item" data-page="index,"><div class="nav-icon-wrap"><span class="material-symbols-rounded">home</span></div><span class="nav-label">Home</span></a>
-    <a href="calendar" class="nav-item" data-page="calendar"><div class="nav-icon-wrap"><span class="material-symbols-rounded">calendar_month</span></div><span class="nav-label">Calendar</span></a>
-    <a href="note" class="nav-item" data-page="note"><div class="nav-icon-wrap"><span class="material-symbols-rounded">book</span></div><span class="nav-label">Notes</span></a>
-    <a href="chatbot" class="nav-item" data-page="chatbot"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
-    <a href="profile" class="nav-item" data-page="profile"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
+    <a href="index.html" class="nav-item" data-page="index,"><div class="nav-icon-wrap"><span class="material-symbols-rounded">home</span></div><span class="nav-label">Home</span></a>
+    <a href="calendar.html" class="nav-item" data-page="calendar"><div class="nav-icon-wrap"><span class="material-symbols-rounded">calendar_month</span></div><span class="nav-label">Calendar</span></a>
+    <a href="note.html" class="nav-item" data-page="note"><div class="nav-icon-wrap"><span class="material-symbols-rounded">book</span></div><span class="nav-label">Notes</span></a>
+    <a href="chatbot.html" class="nav-item" data-page="chatbot"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
+    <a href="profile.html" class="nav-item" data-page="profile"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
   </nav>
 
   <!-- Edit Modal -->
@@ -178,7 +178,7 @@
   </div>
 
   <!-- Firebase -->
-  <script src="/config.js"></script>
+  <script src="config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -236,9 +236,10 @@
       const user = auth.currentUser;
       if (!user) return;
       
-      const university = document.getElementById('edit-university').value.trim();
+      const universityInputValue = document.getElementById('edit-university').value.trim();
+      const university = NIGERIAN_UNIVERSITIES.find(u => u.toLowerCase() === universityInputValue.toLowerCase());
       if (!university) {
-        alert('Please select a university');
+        alert('Please select a valid university from the list');
         return;
       }
       
@@ -264,7 +265,7 @@
 
     function signOut() {
       if (confirm('Are you sure you want to sign out?')) {
-        auth.signOut().then(() => window.location.href = 'login');
+        auth.signOut().then(() => window.location.href = 'login.html');
       }
     }
 
@@ -276,20 +277,24 @@
       const universityInput = document.getElementById('edit-university');
       const universityDropdown = document.getElementById('edit-universityDropdown');
 
-      universityInput.addEventListener('input', (e) => {
-        const query = e.target.value;
+      function renderProfileUniversitySuggestions(query) {
         const results = searchUniversities(query);
+        universityDropdown.innerHTML = '';
 
-        if (query.length === 0) {
-          universityDropdown.classList.remove('active');
+        if (!results.length) {
+          const noMatch = document.createElement('div');
+          noMatch.className = 'university-option';
+          noMatch.textContent = 'No matching universities';
+          noMatch.style.cursor = 'default';
+          universityDropdown.appendChild(noMatch);
+          universityDropdown.classList.add('active');
           return;
         }
 
-        universityDropdown.innerHTML = '';
         results.slice(0, 10).forEach(uni => {
           const option = document.createElement('div');
           option.className = 'university-option';
-          if (universityInput.value === uni) option.classList.add('selected');
+          if (universityInput.value.trim().toLowerCase() === uni.toLowerCase()) option.classList.add('selected');
           option.textContent = uni;
           option.addEventListener('click', () => {
             universityInput.value = uni;
@@ -299,12 +304,14 @@
         });
 
         universityDropdown.classList.add('active');
+      }
+
+      universityInput.addEventListener('input', (e) => {
+        renderProfileUniversitySuggestions(e.target.value);
       });
 
       universityInput.addEventListener('focus', (e) => {
-        if (e.target.value) {
-          universityDropdown.classList.add('active');
-        }
+        renderProfileUniversitySuggestions(e.target.value);
       });
 
       document.addEventListener('click', (e) => {
@@ -316,6 +323,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 

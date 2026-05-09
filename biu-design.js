@@ -41,7 +41,7 @@
       </div>
     `;
     document.body.insertBefore(splash, document.body.firstChild);
-    buildVoxelWords(['CAMPUS', 'CORE']);
+    buildVoxelWords(['BIU', 'ARCHIVE']);
   }
 
   function buildVoxelWords(words) {
@@ -136,23 +136,23 @@
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem('biu-theme', theme);
-    // Icon shows what you'll switch TO (opposite of current)
-    const icon = theme === 'dark' ? 'light_mode' : 'dark_mode';
-    document.querySelectorAll('#theme-toggle .material-symbols-rounded').forEach(el => {
-      el.textContent = icon;
-    });
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.querySelector('.material-symbols-rounded').textContent =
+        theme === 'dark' ? 'dark_mode' : 'light_mode';
+    }
   }
 
   function initTheme() {
     const saved = localStorage.getItem('biu-theme') || 'light';
     applyTheme(saved);
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('#theme-toggle');
-      if (btn) {
-        const current = document.documentElement.dataset.theme || 'light';
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const current = document.documentElement.dataset.theme;
         applyTheme(current === 'dark' ? 'light' : 'dark');
-      }
-    });
+      });
+    }
   }
 
   /* ---- 3. DROPDOWN MENU ---- */
@@ -188,6 +188,18 @@
     });
   }
 
+  function normalizePageName(path) {
+    if (!path) return '';
+    const filename = path.split('/').pop().toLowerCase();
+    return filename || '';
+  }
+
+  function isAuthPage(path) {
+    const page = normalizePageName(path);
+    const authPaths = ['login.html', 'sign.html', 'resetpassword.html', 'login', 'sign', 'resetpassword'];
+    return authPaths.includes(page);
+  }
+
   function initAuthState() {
     if (!window.firebase || !firebase.auth) return;
     if (!firebase.apps.length && window.firebaseConfig) {
@@ -196,20 +208,32 @@
 
     const auth = firebase.auth();
     auth.onAuthStateChanged(user => {
-      const path = window.location.pathname;
-      const authPaths = ['/login.html', '/sign.html', '/resetpassword.html', '/login', '/sign', '/resetpassword'];
-      const isAuthPage = authPaths.some(p => path === p || path.endsWith(p));
+      const path = window.location.pathname || window.location.href;
+      const authPage = isAuthPage(path);
 
       if (user) {
-        if (isAuthPage) {
-          window.location.href = 'index';
+        if (authPage) {
+          window.location.href = 'index.html';
         }
       } else {
-        if (!isAuthPage) {
-          window.location.href = 'login';
+        if (!authPage) {
+          window.location.href = 'login.html';
         }
       }
     });
+  }
+
+  async function tryLoadConfig() {
+    const candidates = ['config.js', '/config.js'];
+    for (const candidate of candidates) {
+      try {
+        await loadScript(candidate);
+        return true;
+      } catch (err) {
+        // continue to fallback path
+      }
+    }
+    return false;
   }
 
   async function initAuth() {
@@ -217,9 +241,8 @@
     const hasConfig = window.firebaseConfig;
 
     if (!hasConfig) {
-      try {
-        await loadScript('/config.js');
-      } catch (err) {
+      const loaded = await tryLoadConfig();
+      if (!loaded) {
         return;
       }
     }

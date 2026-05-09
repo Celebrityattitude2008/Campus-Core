@@ -107,15 +107,15 @@ window.initializeThemeTransitions = function() {
   const root = document.documentElement;
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   
-  // Check for saved theme
-  const savedTheme = localStorage.getItem('theme') || 'light';
+  // Check for saved theme and align with the shared theme key
+  const savedTheme = localStorage.getItem('biu-theme') || 'light';
   root.setAttribute('data-theme', savedTheme);
   updateThemeIcon();
   
   // Listen for system theme changes
   mediaQuery.addEventListener('change', (e) => {
     const newTheme = e.matches ? 'dark' : 'light';
-    localStorage.setItem('theme', newTheme);
+    localStorage.setItem('biu-theme', newTheme);
     root.setAttribute('data-theme', newTheme);
     updateThemeIcon();
   });
@@ -123,7 +123,7 @@ window.initializeThemeTransitions = function() {
 
 // Update theme icon
 window.updateThemeIcon = function() {
-  const themeIcon = document.getElementById('themeIcon');
+  const themeIcon = document.querySelector('#theme-toggle .material-symbols-rounded') || document.getElementById('themeIcon');
   const currentTheme = document.documentElement.getAttribute('data-theme');
   
   if (themeIcon) {
@@ -145,7 +145,7 @@ window.toggleThemeSmooth = function() {
   document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
   
   root.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
+  localStorage.setItem('biu-theme', newTheme);
   updateThemeIcon();
   
   // Remove transition after complete
