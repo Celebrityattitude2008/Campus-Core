@@ -10,10 +10,6 @@
 </head>
 <body class="auth-body">
 
-  <button class="auth-theme-btn" id="theme-toggle" title="Toggle dark/light mode">
-    <span class="material-symbols-rounded">dark_mode</span>
-  </button>
-
   <!-- Animated Background -->
   <div class="animated-bg">
     <div class="animated-blob blob-1"></div>
@@ -55,13 +51,6 @@
         </button>
       </form>
 
-      <div class="divider">OR</div>
-
-      <button type="button" class="btn btn-secondary btn-full googleAuth">
-        <span class="material-symbols-rounded">account_circle</span>
-        Continue with Google
-      </button>
-
       <div class="auth-footer">
         <a href="sign" class="auth-link">Don't have an account? Sign up</a>
       </div>
@@ -96,15 +85,6 @@
         btn.disabled = false;
         btn.textContent = 'Sign In';
       }
-    });
-
-    document.querySelectorAll('.googleAuth').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        try {
-          await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-          window.location.href = 'index';
-        } catch (err) { alert(err.message); }
-      });
     });
   </script>
 </body>
