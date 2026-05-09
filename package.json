@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "sync": "git push https://$GITHUB_PERSONAL_ACCESS_TOKEN@github.com/Celebrityattitude2008/Campus-Core.git $(git symbolic-ref --short HEAD 2>/dev/null || echo main)",
+    "prepare": "sh scripts/install-hooks.sh"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
