@@ -84,31 +84,31 @@
   <!-- Dropdown -->
   <nav class="nav-dropdown" id="nav-dropdown">
     <a href="cgpa.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/3945/3945057.png" alt="CGPA">CGPA Calculator
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#3f19e6;">calculate</span>CGPA Calculator
     </a>
     <a href="assignment.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/1828/1828970.png" alt="Assignments">Assignments
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#f59e0b;">assignment</span>Assignments
     </a>
     <a href="discussions.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/2465/2465765.png" alt="Discussions">Discussions
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#0ea5e9;">forum</span>Discussions
     </a>
     <a href="download.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/3126/3126646.png" alt="Resources">Resources
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#10b981;">download</span>Resources
     </a>
     <a href="news.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/2107/2107957.png" alt="News">News Feed
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#ef4444;">newspaper</span>News Feed
     </a>
     <a href="pq.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/3582/3582825.png" alt="Past Questions">Past Questions
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#7c3aed;">quiz</span>Past Questions
     </a>
     <a href="skillswap.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/2885/2885718.png" alt="SkillSwap">SkillSwap
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#06b6d4;">swap_horiz</span>SkillSwap
     </a>
     <a href="subscriptions.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/3155/3155665.png" alt="Subscriptions">Subscriptions
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#f59e0b;">star</span>Subscriptions
     </a>
     <a href="admin.html" class="dropdown-item">
-      <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/3284/3284047.png" alt="Admin">Admin Panel
+      <span class="material-symbols-rounded" style="font-size:18px;margin-right:8px;vertical-align:middle;color:#94a3b8;">admin_panel_settings</span>Admin Panel
     </a>
     <div class="dropdown-divider"></div>
     <a href="privacy.html" class="dropdown-item">Privacy Policy</a>
@@ -230,7 +230,7 @@
     <!-- Hall of Fame Preview -->
     <div class="glass-card delay-3">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-        <div class="section-title" style="margin-bottom:0;"><img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/2107/2107957.png" alt="Hall"> Hall of Fame</div>
+        <div class="section-title" style="margin-bottom:0;display:flex;align-items:center;gap:6px;"><span class="material-symbols-rounded" style="color:#f59e0b;font-size:20px;">emoji_events</span> Hall of Fame</div>
         <a href="hall" style="font-size:13px;color:#3f19e6;font-weight:600;text-decoration:none;">Full list →</a>
       </div>
       <div style="display:flex;justify-content:space-around;text-align:center;padding:8px 0;">
@@ -240,7 +240,7 @@
           <div style="font-size:11px;color:var(--text-muted);">#2 · 2,840 pts</div>
         </div>
         <div style="position:relative;">
-          <img class="flaticon-icon" src="https://cdn-icons-png.flaticon.com/18/616/616430.png" alt="Top" style="width:24px;height:24px;position:absolute;top:-18px;left:50%;transform:translateX(-50%);">
+          <span class="material-symbols-rounded" style="font-size:24px;color:#f59e0b;position:absolute;top:-22px;left:50%;transform:translateX(-50%);">workspace_premium</span>
           <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:24px;margin:0 auto 8px;box-shadow:0 4px 16px rgba(245,158,11,0.4);">C</div>
           <div style="font-size:13px;font-weight:700;">ChukwuLove</div>
           <div style="font-size:11px;color:#f59e0b;font-weight:600;">#1 · 4,210 pts</div>
@@ -324,7 +324,7 @@
         const row = document.createElement('div');
         row.className = 'activity-item';
         row.innerHTML = `
-          <img src="${getActivityIcon(item.type)}" alt="${item.type}" style="width:32px;height:32px;border-radius:10px;flex-shrink:0;">
+          ${getActivityIcon(item.type)}
           <div style="flex:1;">
             <div style="font-weight:600;font-size:13px;">${item.title || 'Activity update'}</div>
             <div style="font-size:12px;color:var(--text-muted);">${item.description || 'Updated your profile or tasks'}</div>
@@ -345,12 +345,13 @@
 
     function getActivityIcon(type) {
       const icons = {
-        assignment: 'https://cdn-icons-png.flaticon.com/32/1828/1828970.png',
-        news: 'https://cdn-icons-png.flaticon.com/32/2107/2107957.png',
-        profile: 'https://cdn-icons-png.flaticon.com/32/3135/3135715.png',
-        default: 'https://cdn-icons-png.flaticon.com/32/847/847969.png'
+        assignment: { icon: 'assignment', color: '#f59e0b' },
+        news: { icon: 'newspaper', color: '#ef4444' },
+        profile: { icon: 'person', color: '#3f19e6' },
+        default: { icon: 'notifications', color: '#0ea5e9' }
       };
-      return icons[type] || icons.default;
+      const cfg = icons[type] || icons.default;
+      return `<div style="width:32px;height:32px;border-radius:10px;background:${cfg.color}1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span class="material-symbols-rounded" style="font-size:18px;color:${cfg.color};">${cfg.icon}</span></div>`;
     }
   </script>
 </body>
