@@ -9,6 +9,7 @@
   <script src="biu-design.js" defer></script>
   <style>
     .chat-card { display:flex; flex-direction:column; height:520px; }
+    @media (max-width:520px) { .chat-card { height:420px; } }
     .chat-messages { flex:1; overflow-y:auto; margin-bottom:16px; display:flex; flex-direction:column; gap:12px; padding-right:4px; }
     .chat-messages::-webkit-scrollbar { width:4px; }
     .chat-messages::-webkit-scrollbar-track { background:transparent; }

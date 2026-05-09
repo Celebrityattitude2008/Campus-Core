@@ -94,6 +94,11 @@
         </div>
 
         <div class="input-group">
+          <span class="input-icon material-symbols-rounded">category</span>
+          <input type="text" class="form-input" id="regDept" placeholder="Department (e.g. Computer Science)" required>
+        </div>
+
+        <div class="input-group">
           <span class="input-icon material-symbols-rounded">school</span>
           <select class="form-input" id="regLevel">
             <option>100L</option>
@@ -131,22 +136,15 @@
 
     async function syncUserToSheet(userData) {
       try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbyKArHKzmiXS7VtaP9Vlr3XZzhYxsPKTmsxG71vyR_WYFuaD5GufQ86CmHUlibuSQR9/exec', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(userData)
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Sheet sync failed: ${response.status} ${response.statusText} ${errorText}`);
-        }
-        const result = await response.json();
-        if (result.status !== 'success') {
-          throw new Error(`Sheet sync returned failure: ${JSON.stringify(result)}`);
-        }
+        const url = new URL('https://script.google.com/macros/s/AKfycbyKArHKzmiXS7VtaP9Vlr3XZzhYxsPKTmsxG71vyR_WYFuaD5GufQ86CmHUlibuSQR9/exec');
+        url.searchParams.set('name', userData.name || '');
+        url.searchParams.set('email', userData.email || '');
+        url.searchParams.set('university', userData.university || '');
+        url.searchParams.set('department', userData.department || '');
+        url.searchParams.set('level', userData.level || '');
+        await fetch(url.toString(), { method: 'GET', mode: 'no-cors' });
       } catch (syncErr) {
         console.error('Google Sheets sync error:', syncErr);
-        alert('Account created, but we could not sync to the welcome sheet. Please try again later.');
       }
     }
 
@@ -159,6 +157,7 @@
         const name = document.getElementById('regName').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPass').value;
+        const department = document.getElementById('regDept').value.trim();
         const level = document.getElementById('regLevel').value;
         const universityInputValue = document.getElementById('regUniversity').value.trim();
         const university = NIGERIAN_UNIVERSITIES.find(u => u.toLowerCase() === universityInputValue.toLowerCase());
@@ -178,6 +177,7 @@
           email,
           level,
           university,
+          department,
           verified: false,
           createdAt: Date.now()
         });
@@ -188,7 +188,7 @@
           type: 'profile'
         });
 
-        await syncUserToSheet({ name, email, level, university });
+        await syncUserToSheet({ name, email, level, university, department });
 
         alert('Account created! A verification email has been sent to your address. Please verify your email before signing in.');
         window.location.href = 'index.html';
