@@ -21,6 +21,12 @@
     .badge-red { background:rgba(239,68,68,0.12); color:#ef4444; }
     .badge-amber { background:rgba(245,158,11,0.12); color:#f59e0b; }
     .badge-green { background:rgba(16,185,129,0.12); color:#10b981; }
+    .add-card { border-radius:var(--radius-lg); background:rgba(63,25,230,0.06); border:2px dashed rgba(63,25,230,0.25); padding:20px; margin-bottom:16px; display:none; }
+    .add-card .form-input { width:100%; padding:11px 14px; border-radius:var(--radius-md); border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.4); backdrop-filter:blur(10px); color:var(--text-main); font-family:inherit; font-size:14px; outline:none; margin-bottom:10px; }
+    [data-theme="dark"] .add-card .form-input { background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.1); }
+    .add-card .form-input:focus { border-color:#3f19e6; box-shadow:0 0 0 3px rgba(63,25,230,0.12); }
+    .delete-btn { width:30px; height:30px; border-radius:50%; border:none; background:rgba(239,68,68,0.1); color:#ef4444; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; transition:background 0.2s; }
+    .delete-btn:hover { background:rgba(239,68,68,0.22); }
   </style>
 </head>
 <body class="page-body">
@@ -41,7 +47,6 @@
     <a href="assignment.html" class="dropdown-item">Assignments</a>
     <a href="discussions.html" class="dropdown-item">Discussions</a>
     <a href="download.html" class="dropdown-item">Downloads</a>
-    <a href="hall" class="dropdown-item">Hall of Fame</a>
     <a href="news.html" class="dropdown-item">News Feed</a>
     <a href="pq.html" class="dropdown-item">Past Questions</a>
     <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
@@ -57,9 +62,26 @@
         <h1 class="page-title">Assignments</h1>
         <p class="page-subtitle">Track and manage your coursework</p>
       </div>
-      <button class="btn btn-primary" id="addBtn">
-        <span class="material-symbols-rounded">add</span> Add
+      <button class="btn btn-primary" id="addBtn" onclick="toggleAddForm()">
+        <span class="material-symbols-rounded" id="addBtnIcon">add</span> Add
       </button>
+    </div>
+
+    <!-- Inline add form -->
+    <div class="add-card" id="addForm">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div class="icon-box icon-amber" style="width:36px;height:36px;font-size:18px;border-radius:10px;"><span class="material-symbols-rounded">assignment_add</span></div>
+        <h3 style="font-weight:700;font-size:15px;">New Assignment</h3>
+      </div>
+      <input type="text" class="form-input" id="a-course" placeholder="Course code (e.g. MTH 201)" maxlength="40">
+      <input type="text" class="form-input" id="a-content" placeholder="Assignment description…" maxlength="200">
+      <input type="date" class="form-input" id="a-date">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="submitAssignmentBtn" onclick="submitAssignment()">
+          <span class="material-symbols-rounded">add_task</span> Add Assignment
+        </button>
+        <button class="btn btn-secondary" onclick="toggleAddForm()">Cancel</button>
+      </div>
     </div>
 
     <div class="stats-grid" style="margin-bottom:16px;">
@@ -85,9 +107,9 @@
       </div>
     </div>
 
-    <div class="glass-card">
-      <div id="assignments-container" style="min-height:240px; display:flex; align-items:center; justify-content:center; color:var(--text-muted);">
-        Loading assignment data...
+    <div class="glass-card" id="assignments-glass">
+      <div id="assignments-container" style="min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);">
+        Loading assignment data…
       </div>
     </div>
   </main>
@@ -98,7 +120,7 @@
     <a href="chatbot.html" class="nav-item" data-page="chatbot"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
     <a href="profile.html" class="nav-item" data-page="profile"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
   </nav>
-  <!-- Firebase -->
+
   <script src="config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -109,54 +131,84 @@
     const db = firebase.database();
 
     let currentUser = null;
+    let formOpen = false;
 
     auth.onAuthStateChanged(user => {
       currentUser = user;
       if (user) {
         loadAssignments();
-      } else {
-        // Redirect handled by biu-design.js
       }
     });
 
+    function toggleAddForm() {
+      formOpen = !formOpen;
+      document.getElementById('addForm').style.display = formOpen ? 'block' : 'none';
+      document.getElementById('addBtnIcon').textContent = formOpen ? 'close' : 'add';
+      if (formOpen) {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('a-date').value = today;
+        document.getElementById('a-course').focus();
+      }
+    }
+
+    async function submitAssignment() {
+      if (!currentUser) return;
+      const course = document.getElementById('a-course').value.trim();
+      const content = document.getElementById('a-content').value.trim();
+      const date = document.getElementById('a-date').value;
+      if (!course || !content || !date) { alert('Please fill in all fields.'); return; }
+
+      const btn = document.getElementById('submitAssignmentBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span> Adding…';
+
+      await db.ref('assignments/' + currentUser.uid).push({ course, date, content, done: false, createdAt: Date.now() });
+      await db.ref('activities/' + currentUser.uid).push({ title: 'New assignment added', description: `${course} — ${content}`, timestamp: Date.now(), type: 'assignment' });
+
+      document.getElementById('a-course').value = '';
+      document.getElementById('a-content').value = '';
+      toggleAddForm();
+
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-rounded">add_task</span> Add Assignment';
+    }
+
     function loadAssignments() {
-      db.ref('assignments').on('value', snapshot => {
-        const assignments = snapshot.val() || {};
-        renderAssignments(assignments);
+      db.ref('assignments/' + currentUser.uid).on('value', snapshot => {
+        renderAssignments(snapshot.val() || {});
       });
     }
 
     function renderAssignments(assignments) {
-      const container = document.querySelector('.glass-card');
-      container.innerHTML = '<h3 style="font-weight:700;font-size:16px;margin-bottom:14px;">Assignments</h3>';
+      const container = document.getElementById('assignments-glass');
+      container.innerHTML = '<h3 style="font-weight:700;font-size:16px;margin-bottom:14px;">Your Assignments</h3>';
 
       const pending = [];
       const done = [];
 
       Object.entries(assignments).forEach(([id, a]) => {
-        const item = createAssignmentItem(id, a);
-        if (a.done) done.push(item);
-        else pending.push(item);
+        if (a.done) done.push({ id, a });
+        else pending.push({ id, a });
       });
 
       if (pending.length) {
-        container.innerHTML += '<h4 style="font-weight:600;font-size:14px;margin:20px 0 10px 0;">Pending</h4>';
-        pending.forEach(item => container.appendChild(item));
+        container.innerHTML += '<h4 style="font-weight:600;font-size:14px;margin:16px 0 10px 0;color:var(--text-muted);">⏳ Pending</h4>';
+        pending.forEach(({ id, a }) => container.appendChild(createAssignmentItem(id, a)));
       }
 
       if (done.length) {
-        container.innerHTML += '<h4 style="font-weight:600;font-size:14px;margin:20px 0 10px 0;">Completed</h4>';
-        done.forEach(item => container.appendChild(item));
+        container.innerHTML += '<h4 style="font-weight:600;font-size:14px;margin:20px 0 10px 0;color:var(--text-muted);">✅ Completed</h4>';
+        done.forEach(({ id, a }) => container.appendChild(createAssignmentItem(id, a)));
       }
 
       if (!pending.length && !done.length) {
-        container.innerHTML += '<p style="color:var(--text-muted);text-align:center;padding:20px;">No assignments yet. Add your first one!</p>';
+        container.innerHTML += '<p style="color:var(--text-muted);text-align:center;padding:20px;">No assignments yet. Tap "+ Add" to add your first one!</p>';
       }
 
-      updateAssignmentStats(pending.length + done.length, pending.length, done.length);
+      updateStats(pending.length + done.length, pending.length, done.length);
     }
 
-    function updateAssignmentStats(total, pending, done) {
+    function updateStats(total, pending, done) {
       const progress = total === 0 ? 0 : Math.round((done / total) * 100);
       document.getElementById('stat-total').textContent = total || '—';
       document.getElementById('stat-pending').textContent = pending || '—';
@@ -167,72 +219,53 @@
     function createAssignmentItem(id, a) {
       const item = document.createElement('div');
       item.className = 'assignment-item';
-      item.onclick = () => toggleDone(id, a.done);
       item.innerHTML = `
-        <div class="a-checkbox ${a.done ? 'done' : ''}">${a.done ? '<span class="material-symbols-rounded" style="font-size:14px;">check</span>' : ''}</div>
+        <div class="a-checkbox ${a.done ? 'done' : ''}" onclick="toggleDone('${id}', ${a.done})">${a.done ? '<span class="material-symbols-rounded" style="font-size:14px;">check</span>' : ''}</div>
         <div class="a-info">
-          <div class="a-title ${a.done ? 'done' : ''}">${a.course} — ${a.content}</div>
+          <div class="a-title ${a.done ? 'done' : ''}">${escHtml(a.course)} — ${escHtml(a.content)}</div>
           <div class="a-meta">Due: ${a.date}</div>
         </div>
-        <span class="a-badge ${getBadgeClass(a.date)}">${getBadgeText(a.date)}</span>
+        <span class="a-badge ${getBadgeClass(a.date, a.done)}">${getBadgeText(a.date, a.done)}</span>
+        <button class="delete-btn" onclick="deleteAssignment('${id}')" title="Delete"><span class="material-symbols-rounded" style="font-size:16px;">delete</span></button>
       `;
       return item;
     }
 
     function toggleDone(id, currentDone) {
       if (!currentUser) return;
-      db.ref('assignments/' + id).update({ done: !currentDone });
+      db.ref('assignments/' + currentUser.uid + '/' + id).update({ done: !currentDone });
     }
 
-    function getBadgeClass(date) {
+    function deleteAssignment(id) {
+      if (!currentUser) return;
+      if (confirm('Delete this assignment?')) {
+        db.ref('assignments/' + currentUser.uid + '/' + id).remove();
+      }
+    }
+
+    function getBadgeClass(date, done) {
+      if (done) return 'badge-green';
       const due = new Date(date);
-      const now = new Date();
-      const diff = (due - now) / (1000 * 60 * 60 * 24);
+      const diff = (due - new Date()) / (1000 * 60 * 60 * 24);
       if (diff < 0) return 'badge-red';
-      if (diff < 1) return 'badge-red';
       if (diff < 3) return 'badge-amber';
       return 'badge-green';
     }
 
-    function getBadgeText(date) {
+    function getBadgeText(date, done) {
+      if (done) return 'Done';
       const due = new Date(date);
-      const now = new Date();
-      const diff = (due - now) / (1000 * 60 * 60 * 24);
+      const diff = (due - new Date()) / (1000 * 60 * 60 * 24);
       if (diff < 0) return 'Overdue';
       if (diff < 1) return 'Today';
       if (diff < 2) return 'Tomorrow';
-      if (diff < 7) return `${Math.ceil(diff)} days`;
+      if (diff < 7) return `${Math.ceil(diff)}d left`;
       return 'Upcoming';
     }
 
-    // Add assignment modal
-    document.getElementById('addBtn').onclick = () => {
-      if (!currentUser) return;
-      const course = prompt('Course code:');
-      const date = prompt('Due date (YYYY-MM-DD):');
-      const content = prompt('Assignment description:');
-      if (course && date && content) {
-        db.ref('assignments').push({
-          course,
-          date,
-          content,
-          done: false,
-          userId: currentUser.uid,
-          createdAt: Date.now()
-        });
-        db.ref('activities/' + currentUser.uid).push({
-          title: 'New assignment added',
-          description: `${course} — ${content}`,
-          timestamp: Date.now(),
-          type: 'assignment'
-        });
-      }
-    };
+    function escHtml(str) {
+      return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
   </script>
 </body>
 </html>
-
-
-
-
-

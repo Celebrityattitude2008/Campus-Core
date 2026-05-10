@@ -24,6 +24,12 @@
     .university-option { padding:10px 16px; cursor:pointer; font-size:14px; color:var(--text-main); transition:background 0.2s; border-bottom:1px solid rgba(255,255,255,0.05); }
     .university-option:hover { background:rgba(63,25,230,0.1); color:#3f19e6; }
     .university-option.selected { background:rgba(63,25,230,0.2); color:#3f19e6; font-weight:600; }
+    .friend-card { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:var(--radius-md); background:rgba(255,255,255,0.15); margin-bottom:8px; transition:background 0.2s; }
+    [data-theme="dark"] .friend-card { background:rgba(0,0,0,0.15); }
+    .friend-card:hover { background:rgba(255,255,255,0.28); }
+    .friend-av { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#3f19e6,#0ea5e9); display:flex; align-items:center; justify-content:center; font-size:18px; color:white; font-weight:700; flex-shrink:0; }
+    .course-chip { display:inline-flex; align-items:center; padding:4px 12px; border-radius:9999px; background:rgba(63,25,230,0.1); color:#3f19e6; font-size:12px; font-weight:600; margin:3px; }
+    [data-theme="dark"] .course-chip { background:rgba(63,25,230,0.2); color:#a78bfa; }
   </style>
 </head>
 <body class="page-body">
@@ -44,7 +50,6 @@
     <a href="assignment.html" class="dropdown-item">Assignments</a>
     <a href="discussions.html" class="dropdown-item">Discussions</a>
     <a href="download.html" class="dropdown-item">Downloads</a>
-    <a href="hall" class="dropdown-item">Hall of Fame</a>
     <a href="news.html" class="dropdown-item">News Feed</a>
     <a href="pq.html" class="dropdown-item">Past Questions</a>
     <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
@@ -64,13 +69,11 @@
       <p class="page-subtitle">Your Campus Core account</p>
     </div>
 
-    <!-- Loading state -->
     <div id="loading-card" class="glass-card" style="text-align:center;padding:40px;">
       <div style="font-size:40px;margin-bottom:12px;">⏳</div>
       <p class="text-muted">Loading your profile…</p>
     </div>
 
-    <!-- Authenticated state -->
     <div id="user-card" class="glass-card" style="display:none;">
       <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
         <div class="profile-avatar" style="width:80px;height:80px;flex-shrink:0;font-size:32px;" id="user-avatar-icon">
@@ -98,10 +101,6 @@
           <span id="user-university">Loading…</span>
         </div>
         <div class="profile-row">
-          <span class="material-symbols-rounded profile-row-icon" style="color:#10b981;">book</span>
-          <span>6 Active Courses</span>
-        </div>
-        <div class="profile-row">
           <span class="material-symbols-rounded profile-row-icon" style="color:#f59e0b;">grade</span>
           <span id="user-cgpa">CGPA: —</span>
         </div>
@@ -112,8 +111,30 @@
       </div>
     </div>
 
+    <!-- My Courses (from CGPA history) -->
+    <div class="glass-card delay-1" id="courses-card" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div class="icon-box icon-blue" style="width:36px;height:36px;font-size:18px;border-radius:10px;"><span class="material-symbols-rounded">menu_book</span></div>
+        <h3 style="font-weight:700;font-size:16px;">My Courses</h3>
+        <a href="cgpa.html" style="margin-left:auto;font-size:13px;font-weight:600;color:#3f19e6;text-decoration:none;">Add courses →</a>
+      </div>
+      <div id="courses-list-container"></div>
+    </div>
+
+    <!-- Friends Section -->
+    <div class="glass-card delay-2" id="friends-card" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div class="icon-box icon-green" style="width:36px;height:36px;font-size:18px;border-radius:10px;"><span class="material-symbols-rounded">group</span></div>
+        <h3 style="font-weight:700;font-size:16px;">Friends</h3>
+        <a href="discussions.html" style="margin-left:auto;font-size:13px;font-weight:600;color:#3f19e6;text-decoration:none;">Find friends →</a>
+      </div>
+      <div id="friends-list">
+        <p class="text-muted" style="font-size:14px;text-align:center;padding:16px;">No friends yet. Add friends from Discussions!</p>
+      </div>
+    </div>
+
     <div id="user-actions" style="display:none;">
-      <div class="glass-card delay-1">
+      <div class="glass-card delay-3">
         <h3 style="font-weight:700;font-size:16px;margin-bottom:14px;">Quick Links</h3>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
           <a href="cgpa.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
@@ -124,9 +145,9 @@
             <div class="icon-box icon-amber" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">assignment</span></div>
             Assignments
           </a>
-          <a href="download.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
-            <div class="icon-box icon-green" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">download</span></div>
-            Downloads
+          <a href="discussions.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
+            <div class="icon-box icon-purple" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">forum</span></div>
+            Discussions
           </a>
           <a href="subscriptions.html" class="btn btn-secondary" style="text-decoration:none;justify-content:flex-start;gap:10px;">
             <div class="icon-box icon-purple" style="width:32px;height:32px;font-size:16px;border-radius:8px;"><span class="material-symbols-rounded">star</span></div>
@@ -141,7 +162,6 @@
     </div>
   </main>
 
-  <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <a href="index.html" class="nav-item" data-page="index,"><div class="nav-icon-wrap"><span class="material-symbols-rounded">home</span></div><span class="nav-label">Home</span></a>
     <a href="calendar.html" class="nav-item" data-page="calendar"><div class="nav-icon-wrap"><span class="material-symbols-rounded">calendar_month</span></div><span class="nav-label">Calendar</span></a>
@@ -161,7 +181,7 @@
       <input type="text" class="modal-input" id="edit-name" placeholder="Your full name">
       <label class="modal-label">Level</label>
       <select class="modal-input" id="edit-level">
-        <option>100L</option><option>200L</option><option>300L</option><option>400L</option>
+        <option>100L</option><option>200L</option><option>300L</option><option>400L</option><option>500L</option>
       </select>
       <label class="modal-label">University</label>
       <div class="university-search-container" id="universitySearchContainer">
@@ -186,38 +206,106 @@
     if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
-
     let currentProfile = {};
 
     auth.onAuthStateChanged(async (user) => {
       document.getElementById('loading-card').style.display = 'none';
-      if (!user) {
-        // Redirect handled by biu-design.js
-        return;
-      }
+      if (!user) return;
+
       document.getElementById('user-card').style.display = 'block';
       document.getElementById('user-actions').style.display = 'block';
-
+      document.getElementById('friends-card').style.display = 'block';
       document.getElementById('user-email').textContent = user.email;
 
       const snap = await db.ref('profiles/' + user.uid).once('value');
       const p = snap.val() || {};
       currentProfile = p;
 
-      document.getElementById('user-name').textContent = p.fullName || user.displayName || 'BIU Student';
-      document.getElementById('user-level').textContent = p.level ? p.level + ' · ' + (p.department || 'BIU Student') : 'BIU Student';
+      document.getElementById('user-name').textContent = p.fullName || user.displayName || 'Campus Core Student';
+      document.getElementById('user-level').textContent = p.level ? p.level + ' · ' + (p.department || '') : 'Level not set';
       document.getElementById('user-university').textContent = p.university || 'University not specified';
-      document.getElementById('user-cgpa').textContent = p.cgpa ? 'CGPA: ' + p.cgpa : 'CGPA: Not calculated';
+      document.getElementById('user-cgpa').textContent = p.cgpa ? 'CGPA: ' + p.cgpa : 'CGPA: Not calculated yet';
       document.getElementById('user-joined').textContent = p.createdAt
         ? 'Member since: ' + new Date(p.createdAt).toLocaleDateString('en-NG', { year: 'numeric', month: 'long' })
-        : 'Member since: BIU Hub';
+        : 'Member since: —';
 
       if (!p.verified) {
         document.getElementById('user-verified').style.background = 'rgba(245,158,11,0.1)';
         document.getElementById('user-verified').style.color = '#f59e0b';
         document.getElementById('user-verified').innerHTML = '<span class="material-symbols-rounded" style="font-size:16px;">schedule</span> Pending Verification';
       }
+
+      loadCourses(user.uid);
+      loadFriends(user.uid);
     });
+
+    async function loadCourses(uid) {
+      const snap = await db.ref('profiles/' + uid + '/courses').once('value');
+      const data = snap.val();
+      if (!data) return;
+
+      const allCourses = new Set();
+      Object.values(data).forEach(arr => {
+        if (Array.isArray(arr)) arr.forEach(c => { if (c) allCourses.add(c); });
+      });
+
+      if (allCourses.size === 0) return;
+
+      document.getElementById('courses-card').style.display = 'block';
+      const container = document.getElementById('courses-list-container');
+      container.innerHTML = '';
+      allCourses.forEach(course => {
+        const chip = document.createElement('span');
+        chip.className = 'course-chip';
+        chip.textContent = course;
+        container.appendChild(chip);
+      });
+    }
+
+    async function loadFriends(uid) {
+      const snap = await db.ref('friends/' + uid).once('value');
+      const data = snap.val();
+      const listEl = document.getElementById('friends-list');
+      if (!data) {
+        listEl.innerHTML = '<p class="text-muted" style="font-size:14px;text-align:center;padding:16px;">No friends yet. Add friends from Discussions!</p>';
+        return;
+      }
+
+      const friendUids = Object.keys(data);
+      listEl.innerHTML = '';
+      const colors = ['#3f19e6,#0ea5e9','#10b981,#0ea5e9','#f59e0b,#ef4444','#7c3aed,#0ea5e9','#ec4899,#7c3aed'];
+
+      for (const fUid of friendUids) {
+        const fSnap = await db.ref('profiles/' + fUid).once('value');
+        const fP = fSnap.val() || {};
+        const name = fP.fullName || 'Campus Student';
+        const initial = name[0].toUpperCase();
+        const color = colors[initial.charCodeAt(0) % colors.length];
+
+        const card = document.createElement('div');
+        card.className = 'friend-card';
+        card.innerHTML = `
+          <div class="friend-av" style="background:linear-gradient(135deg,${color});">${initial}</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:14px;">${escHtml(name)}</div>
+            <div class="text-muted" style="font-size:12px;">${escHtml([fP.level, fP.department].filter(Boolean).join(' · ') || 'Campus Core Student')}</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button onclick="window.location.href='viewprofile.html?uid=${fUid}'" style="width:34px;height:34px;border-radius:50%;border:none;background:rgba(63,25,230,0.1);color:#3f19e6;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="View Profile">
+              <span class="material-symbols-rounded" style="font-size:18px;">person</span>
+            </button>
+            <button onclick="window.location.href='chat.html?uid=${fUid}'" style="width:34px;height:34px;border-radius:50%;border:none;background:rgba(16,185,129,0.1);color:#10b981;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Message">
+              <span class="material-symbols-rounded" style="font-size:18px;">chat</span>
+            </button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      }
+    }
+
+    function escHtml(str) {
+      return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
 
     function openEditModal() {
       document.getElementById('edit-name').value = currentProfile.fullName || '';
@@ -235,30 +323,18 @@
     async function saveProfile() {
       const user = auth.currentUser;
       if (!user) return;
-      
       const universityInputValue = document.getElementById('edit-university').value.trim();
-      const university = NIGERIAN_UNIVERSITIES.find(u => u.toLowerCase() === universityInputValue.toLowerCase());
-      if (!university) {
-        alert('Please select a valid university from the list');
-        return;
-      }
-      
+      const university = NIGERIAN_UNIVERSITIES.find(u => u.toLowerCase() === universityInputValue.toLowerCase()) || universityInputValue;
       const updates = {
         fullName: document.getElementById('edit-name').value.trim(),
         level: document.getElementById('edit-level').value,
-        university: university,
+        university,
         department: document.getElementById('edit-dept').value.trim(),
       };
       await db.ref('profiles/' + user.uid).update(updates);
-      await db.ref('activities/' + user.uid).push({
-        title: 'Profile updated',
-        description: `Your student profile was updated.`,
-        timestamp: Date.now(),
-        type: 'profile'
-      });
       currentProfile = { ...currentProfile, ...updates };
       document.getElementById('user-name').textContent = updates.fullName;
-      document.getElementById('user-level').textContent = updates.level + ' · ' + (updates.department || 'BIU Student');
+      document.getElementById('user-level').textContent = updates.level + ' · ' + (updates.department || '');
       document.getElementById('user-university').textContent = updates.university;
       closeEditModal();
     }
@@ -277,10 +353,9 @@
       const universityInput = document.getElementById('edit-university');
       const universityDropdown = document.getElementById('edit-universityDropdown');
 
-      function renderProfileUniversitySuggestions(query) {
+      function renderSuggestions(query) {
         const results = searchUniversities(query);
         universityDropdown.innerHTML = '';
-
         if (!results.length) {
           const noMatch = document.createElement('div');
           noMatch.className = 'university-option';
@@ -290,7 +365,6 @@
           universityDropdown.classList.add('active');
           return;
         }
-
         results.slice(0, 10).forEach(uni => {
           const option = document.createElement('div');
           option.className = 'university-option';
@@ -302,29 +376,15 @@
           });
           universityDropdown.appendChild(option);
         });
-
         universityDropdown.classList.add('active');
       }
 
-      universityInput.addEventListener('input', (e) => {
-        renderProfileUniversitySuggestions(e.target.value);
-      });
-
-      universityInput.addEventListener('focus', (e) => {
-        renderProfileUniversitySuggestions(e.target.value);
-      });
-
+      universityInput.addEventListener('input', (e) => renderSuggestions(e.target.value));
+      universityInput.addEventListener('focus', (e) => renderSuggestions(e.target.value));
       document.addEventListener('click', (e) => {
-        if (!e.target.closest('#universitySearchContainer')) {
-          universityDropdown.classList.remove('active');
-        }
+        if (!e.target.closest('#universitySearchContainer')) universityDropdown.classList.remove('active');
       });
     }
   </script>
 </body>
 </html>
-
-
-
-
-

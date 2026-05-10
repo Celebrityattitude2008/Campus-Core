@@ -26,7 +26,6 @@
     <a href="assignment.html" class="dropdown-item">Assignments</a>
     <a href="discussions.html" class="dropdown-item">Discussions</a>
     <a href="download.html" class="dropdown-item">Downloads</a>
-    <a href="hall" class="dropdown-item">Hall of Fame</a>
     <a href="news.html" class="dropdown-item">News Feed</a>
     <a href="pq.html" class="dropdown-item">Past Questions</a>
     <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
@@ -43,13 +42,24 @@
       </button>
       <h2 style="font-weight:700;font-size:20px;">Student Profile</h2>
     </div>
+
     <div class="glass-card" id="profile-container" style="text-align:center;padding:32px;">
-      <div class="profile-avatar" id="view-avatar">
+      <div class="profile-avatar" id="view-avatar" style="width:80px;height:80px;font-size:32px;margin:0 auto 12px;">
         <span class="material-symbols-rounded">person</span>
       </div>
       <h3 id="view-name" style="font-size:22px;font-weight:700;margin-bottom:4px;">Loading…</h3>
       <p id="view-level" class="text-muted" style="font-size:14px;margin-bottom:20px;"></p>
       <div id="view-info"></div>
+
+      <!-- Action buttons — shown after profile loads -->
+      <div id="action-buttons" style="display:none;margin-top:20px;display:none;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="friend-btn" onclick="handleFriendAction()">
+          <span class="material-symbols-rounded">person_add</span> Add Friend
+        </button>
+        <button class="btn btn-secondary" id="msg-btn" onclick="startChat()" style="display:none;">
+          <span class="material-symbols-rounded">chat</span> Message
+        </button>
+      </div>
     </div>
   </main>
   <nav class="bottom-nav">
@@ -59,38 +69,82 @@
     <a href="chatbot.html" class="nav-item" data-page="chatbot"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
     <a href="profile.html" class="nav-item" data-page="profile"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
   </nav>
+
   <script src="config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
     if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.database();
 
-    const uid = new URLSearchParams(window.location.search).get('uid');
-    if (uid) {
-      db.ref('profiles/' + uid).once('value').then(snap => {
-        if (snap.exists()) {
-          const p = snap.val();
-          document.getElementById('view-name').textContent = p.fullName || 'Unknown Student';
-          document.getElementById('view-level').textContent = (p.department || 'Student') + ' · ' + (p.level || '');
-          document.getElementById('view-info').innerHTML = `
-            <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#3f19e6">mail</span><span>${p.email || 'Private'}</span></div>
-            <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#10b981">school</span><span>${p.level || 'Level unknown'}</span></div>
-            <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#06b6d4">home_work</span><span>${p.university || 'University not specified'}</span></div>
-            <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#f59e0b">verified</span><span>${p.verified ? 'Verified Student' : 'Pending verification'}</span></div>
-          `;
-        } else {
-          document.getElementById('view-name').textContent = 'Profile not found';
-        }
-      });
-    } else {
-      document.getElementById('view-name').textContent = 'No profile selected';
+    const viewUid = new URLSearchParams(window.location.search).get('uid');
+    let currentUser = null;
+    let isFriend = false;
+
+    auth.onAuthStateChanged(async user => {
+      currentUser = user;
+      if (!viewUid) { document.getElementById('view-name').textContent = 'No profile selected'; return; }
+      if (user && viewUid === user.uid) { window.location.href = 'profile.html'; return; }
+
+      const [profSnap, friendSnap] = await Promise.all([
+        db.ref('profiles/' + viewUid).once('value'),
+        user ? db.ref('friends/' + user.uid + '/' + viewUid).once('value') : Promise.resolve({ exists: () => false })
+      ]);
+
+      if (profSnap.exists()) {
+        const p = profSnap.val();
+        document.getElementById('view-name').textContent = p.fullName || 'Unknown Student';
+        document.getElementById('view-level').textContent = [p.department, p.level].filter(Boolean).join(' · ');
+        document.getElementById('view-info').innerHTML = `
+          <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#10b981">school</span><span>${p.level || 'Level unknown'}</span></div>
+          <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#06b6d4">home_work</span><span>${p.university || 'University not specified'}</span></div>
+          <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#7c3aed">book</span><span>${p.department || 'Department not specified'}</span></div>
+          <div class="profile-row"><span class="material-symbols-rounded profile-row-icon" style="color:#f59e0b">verified</span><span>${p.verified ? 'Verified Student' : 'Pending verification'}</span></div>
+        `;
+      } else {
+        document.getElementById('view-name').textContent = 'Profile not found';
+      }
+
+      if (user && viewUid !== user.uid) {
+        isFriend = friendSnap.exists();
+        const actionDiv = document.getElementById('action-buttons');
+        actionDiv.style.display = 'flex';
+        updateFriendBtn();
+      }
+    });
+
+    function updateFriendBtn() {
+      const btn = document.getElementById('friend-btn');
+      const msgBtn = document.getElementById('msg-btn');
+      if (isFriend) {
+        btn.innerHTML = '<span class="material-symbols-rounded">group</span> Friends';
+        btn.style.background = 'rgba(16,185,129,0.15)';
+        btn.style.color = '#10b981';
+        btn.style.border = '1px solid rgba(16,185,129,0.3)';
+        msgBtn.style.display = 'flex';
+      } else {
+        btn.innerHTML = '<span class="material-symbols-rounded">person_add</span> Add Friend';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.border = '';
+        msgBtn.style.display = 'none';
+      }
+    }
+
+    async function handleFriendAction() {
+      if (!currentUser) { window.location.href = 'login.html'; return; }
+      if (isFriend) return;
+      await db.ref('friends/' + currentUser.uid + '/' + viewUid).set(true);
+      await db.ref('friends/' + viewUid + '/' + currentUser.uid).set(true);
+      isFriend = true;
+      updateFriendBtn();
+    }
+
+    function startChat() {
+      if (viewUid) window.location.href = 'chat.html?uid=' + viewUid;
     }
   </script>
 </body>
 </html>
-
-
-
-
-

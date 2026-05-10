@@ -20,12 +20,15 @@
     .result-gpa { font-size:52px; font-weight:800; line-height:1; }
     .result-label { font-size:14px; opacity:0.8; margin-top:4px; }
     .grade-badge { font-size:18px; font-weight:700; margin-top:8px; }
+    .sem-select { padding:10px 14px; border-radius:var(--radius-md); border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.4); backdrop-filter:blur(10px); color:var(--text-main); font-family:inherit; font-size:14px; outline:none; }
+    [data-theme="dark"] .sem-select { background:rgba(0,0,0,0.2); border-color:rgba(255,255,255,0.1); }
+    .history-item { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:var(--radius-md); background:rgba(255,255,255,0.15); margin-bottom:8px; }
+    [data-theme="dark"] .history-item { background:rgba(0,0,0,0.15); }
+    .save-toast { position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:#10b981; color:white; padding:10px 20px; border-radius:9999px; font-size:14px; font-weight:600; z-index:9999; animation:fadeInUp 0.3s ease; display:none; }
+    @keyframes fadeInUp { from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
     @media (max-width: 520px) {
       .course-row { grid-template-columns:1fr 1fr; row-gap:6px; }
       .course-row input { grid-column:1/-1; }
-      .course-row select:first-of-type { grid-column:1; }
-      .course-row select:last-of-type { grid-column:2; }
-      .remove-btn { grid-column:2; justify-self:end; }
       .result-gpa { font-size:40px; }
       .scale-grid { grid-template-columns:1fr !important; }
     }
@@ -49,7 +52,6 @@
     <a href="assignment.html" class="dropdown-item">Assignments</a>
     <a href="discussions.html" class="dropdown-item">Discussions</a>
     <a href="download.html" class="dropdown-item">Downloads</a>
-    <a href="hall" class="dropdown-item">Hall of Fame</a>
     <a href="news.html" class="dropdown-item">News Feed</a>
     <a href="pq.html" class="dropdown-item">Past Questions</a>
     <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
@@ -62,21 +64,35 @@
   <main class="main-content">
     <div class="page-header">
       <h1 class="page-title">CGPA Calculator</h1>
-      <p class="page-subtitle">Calculate your Cumulative Grade Point Average</p>
+      <p class="page-subtitle">Calculate and save your Grade Point Average</p>
     </div>
 
     <div class="glass-card">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
         <div class="icon-box icon-blue"><span class="material-symbols-rounded">calculate</span></div>
         <div>
           <h3 style="font-weight:700;font-size:17px;">Add Your Courses</h3>
-          <p class="text-muted" style="font-size:13px;">Enter course units and your grade for each</p>
+          <p class="text-muted" style="font-size:13px;">Select level & semester, then enter each course</p>
         </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <select class="sem-select" id="sel-level">
+          <option value="100L">100 Level</option>
+          <option value="200L">200 Level</option>
+          <option value="300L">300 Level</option>
+          <option value="400L">400 Level</option>
+          <option value="500L">500 Level</option>
+        </select>
+        <select class="sem-select" id="sel-semester">
+          <option value="1st">1st Semester</option>
+          <option value="2nd">2nd Semester</option>
+        </select>
       </div>
 
       <div id="courses-list">
         <div class="course-row">
-          <input type="text" placeholder="Course name (optional)">
+          <input type="text" placeholder="Course name (e.g. MTH 101)">
           <select>
             <option value="5">5 Units</option>
             <option value="4" selected>4 Units</option>
@@ -101,7 +117,7 @@
           <span class="material-symbols-rounded">add</span> Add Course
         </button>
         <button class="btn btn-primary" onclick="calculateGPA()">
-          <span class="material-symbols-rounded">calculate</span> Calculate GPA
+          <span class="material-symbols-rounded">calculate</span> Calculate & Save
         </button>
         <button class="btn btn-secondary" onclick="resetAll()">
           <span class="material-symbols-rounded">refresh</span> Reset
@@ -112,7 +128,7 @@
     <div id="result-container" style="display:none;">
       <div class="result-box glass-card" style="background:linear-gradient(135deg,#3f19e6,#0ea5e9);border:none;">
         <div class="result-gpa" id="result-gpa">0.00</div>
-        <div class="result-label">Grade Point Average</div>
+        <div class="result-label">Grade Point Average — <span id="result-sem-label"></span></div>
         <div class="grade-badge" id="result-grade"></div>
       </div>
       <div class="glass-card" style="margin-top:16px;">
@@ -125,7 +141,18 @@
         </div>
       </div>
     </div>
+
+    <div class="glass-card delay-2" id="history-card" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div class="icon-box icon-green" style="width:36px;height:36px;font-size:18px;border-radius:10px;"><span class="material-symbols-rounded">history</span></div>
+        <h3 style="font-weight:700;font-size:16px;">Saved GPA History</h3>
+      </div>
+      <div id="history-list"></div>
+    </div>
   </main>
+
+  <div class="save-toast" id="save-toast">✅ GPA saved to your profile!</div>
+
   <nav class="bottom-nav">
     <a href="index.html" class="nav-item" data-page="index,"><div class="nav-icon-wrap"><span class="material-symbols-rounded">home</span></div><span class="nav-label">Home</span></a>
     <a href="calendar.html" class="nav-item" data-page="calendar"><div class="nav-icon-wrap"><span class="material-symbols-rounded">calendar_month</span></div><span class="nav-label">Calendar</span></a>
@@ -133,80 +160,132 @@
     <a href="chatbot.html" class="nav-item" data-page="chatbot"><div class="nav-icon-wrap"><span class="material-symbols-rounded">chat</span></div><span class="nav-label">AI Chat</span></a>
     <a href="profile.html" class="nav-item" data-page="profile"><div class="nav-icon-wrap"><span class="material-symbols-rounded">person</span></div><span class="nav-label">Profile</span></a>
   </nav>
+
   <script>
     function addCourse() {
       const row = document.createElement('div');
       row.className = 'course-row';
       row.innerHTML = `
-        <input type="text" placeholder="Course name (optional)">
-        <select>
-          <option value="5">5 Units</option>
-          <option value="4" selected>4 Units</option>
-          <option value="3">3 Units</option>
-          <option value="2">2 Units</option>
-          <option value="1">1 Unit</option>
-        </select>
-        <select>
-          <option value="5">A (5.0)</option>
-          <option value="4">B (4.0)</option>
-          <option value="3">C (3.0)</option>
-          <option value="2">D (2.0)</option>
-          <option value="1">E (1.0)</option>
-          <option value="0">F (0.0)</option>
-        </select>
-        <button class="remove-btn" onclick="removeCourse(this)"><span class="material-symbols-rounded">close</span></button>
-      `;
+        <input type="text" placeholder="Course name (e.g. MTH 101)">
+        <select><option value="5">5 Units</option><option value="4" selected>4 Units</option><option value="3">3 Units</option><option value="2">2 Units</option><option value="1">1 Unit</option></select>
+        <select><option value="5">A (5.0)</option><option value="4">B (4.0)</option><option value="3">C (3.0)</option><option value="2">D (2.0)</option><option value="1">E (1.0)</option><option value="0">F (0.0)</option></select>
+        <button class="remove-btn" onclick="removeCourse(this)"><span class="material-symbols-rounded">close</span></button>`;
       document.getElementById('courses-list').appendChild(row);
     }
+
     function removeCourse(btn) {
       const rows = document.querySelectorAll('.course-row');
       if (rows.length > 1) btn.closest('.course-row').remove();
     }
+
     function calculateGPA() {
       const rows = document.querySelectorAll('.course-row');
+      const level = document.getElementById('sel-level').value;
+      const semester = document.getElementById('sel-semester').value;
       let totalPoints = 0, totalUnits = 0;
+      const courses = [];
+
       rows.forEach(row => {
+        const name = row.querySelector('input').value.trim() || 'Course';
         const selects = row.querySelectorAll('select');
         const units = parseInt(selects[0].value);
         const grade = parseFloat(selects[1].value);
         totalPoints += units * grade;
         totalUnits += units;
+        courses.push({ name, units, grade });
       });
+
       if (totalUnits === 0) return;
       const gpa = totalPoints / totalUnits;
       document.getElementById('result-gpa').textContent = gpa.toFixed(2);
-      const grade = gpa >= 4.5 ? '🏆 First Class Honours' :
-                    gpa >= 3.5 ? '⭐ Second Class Upper' :
-                    gpa >= 2.4 ? '✅ Second Class Lower' :
-                    gpa >= 1.5 ? '📘 Third Class' : '❌ Fail';
-      document.getElementById('result-grade').textContent = grade;
+      document.getElementById('result-sem-label').textContent = level + ' · ' + semester + ' Semester';
+      const gradeText = gpa >= 4.5 ? '🏆 First Class Honours' :
+                        gpa >= 3.5 ? '⭐ Second Class Upper' :
+                        gpa >= 2.4 ? '✅ Second Class Lower' :
+                        gpa >= 1.5 ? '📘 Third Class' : '❌ Fail';
+      document.getElementById('result-grade').textContent = gradeText;
       document.getElementById('result-container').style.display = 'block';
       document.getElementById('result-container').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      saveToFirebase(gpa, courses, level, semester);
     }
+
     function resetAll() {
       document.getElementById('courses-list').innerHTML = `
         <div class="course-row">
-          <input type="text" placeholder="Course name (optional)">
+          <input type="text" placeholder="Course name (e.g. MTH 101)">
           <select><option value="5">5 Units</option><option value="4" selected>4 Units</option><option value="3">3 Units</option><option value="2">2 Units</option><option value="1">1 Unit</option></select>
           <select><option value="5">A (5.0)</option><option value="4">B (4.0)</option><option value="3">C (3.0)</option><option value="2">D (2.0)</option><option value="1">E (1.0)</option><option value="0">F (0.0)</option></select>
           <button class="remove-btn" onclick="removeCourse(this)"><span class="material-symbols-rounded">close</span></button>
         </div>`;
       document.getElementById('result-container').style.display = 'none';
     }
+
+    function showToast() {
+      const t = document.getElementById('save-toast');
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2500);
+    }
   </script>
+
   <script src="config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
     if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (!user) window.location.href = 'login.html';
+    const auth = firebase.auth();
+    const db = firebase.database();
+    let currentUser = null;
+
+    auth.onAuthStateChanged(user => {
+      if (!user) { window.location.href = 'login.html'; return; }
+      currentUser = user;
+      loadHistory();
     });
+
+    async function saveToFirebase(gpa, courses, level, semester) {
+      if (!currentUser) return;
+      const key = level.replace('L','') + '_' + semester.replace('st','1').replace('nd','2');
+      const entry = {
+        gpa: parseFloat(gpa.toFixed(2)),
+        level, semester,
+        courses: courses,
+        savedAt: Date.now()
+      };
+      await db.ref('profiles/' + currentUser.uid + '/cgpa_history/' + key).set(entry);
+      await db.ref('profiles/' + currentUser.uid + '/courses/' + key).set(
+        courses.map(c => c.name).filter(n => n && n !== 'Course')
+      );
+      await db.ref('profiles/' + currentUser.uid).update({ cgpa: parseFloat(gpa.toFixed(2)) });
+      showToast();
+      loadHistory();
+    }
+
+    function loadHistory() {
+      if (!currentUser) return;
+      db.ref('profiles/' + currentUser.uid + '/cgpa_history').once('value', snap => {
+        const data = snap.val();
+        const card = document.getElementById('history-card');
+        const list = document.getElementById('history-list');
+        if (!data) { card.style.display = 'none'; return; }
+        card.style.display = 'block';
+        const entries = Object.entries(data).sort((a,b) => b[1].savedAt - a[1].savedAt);
+        list.innerHTML = '';
+        entries.forEach(([key, entry]) => {
+          const gradeColor = entry.gpa >= 4.5 ? '#10b981' : entry.gpa >= 3.5 ? '#3f19e6' : entry.gpa >= 2.4 ? '#f59e0b' : '#ef4444';
+          const div = document.createElement('div');
+          div.className = 'history-item';
+          div.innerHTML = `
+            <div>
+              <div style="font-weight:700;font-size:14px;">${entry.level} · ${entry.semester} Semester</div>
+              <div style="font-size:12px;color:var(--text-muted);">${entry.courses ? entry.courses.length : 0} course(s) · ${new Date(entry.savedAt).toLocaleDateString('en-NG',{month:'short',day:'numeric',year:'numeric'})}</div>
+            </div>
+            <span style="font-size:22px;font-weight:800;color:${gradeColor};">${entry.gpa.toFixed(2)}</span>`;
+          list.appendChild(div);
+        });
+      });
+    }
   </script>
 </body>
 </html>
-
-
-
-
-

@@ -22,6 +22,8 @@
     .feature-list li { display:flex; align-items:center; gap:8px; font-size:14px; padding:4px 0; opacity:0.9; }
     .feature-list li .material-symbols-rounded { font-size:18px; }
     .current-badge { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:9999px; background:rgba(16,185,129,0.1); color:#10b981; font-size:14px; font-weight:700; margin-top:16px; }
+    .coming-soon-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border-radius:var(--radius-md); border:none; background:rgba(255,255,255,0.25); color:white; font-size:15px; font-weight:700; cursor:default; font-family:inherit; letter-spacing:0.5px; }
+    .coming-soon-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 12px; border-radius:9999px; font-size:11px; font-weight:700; background:rgba(255,255,255,0.3); color:white; margin-top:10px; }
   </style>
 </head>
 <body class="page-body">
@@ -42,7 +44,6 @@
     <a href="assignment.html" class="dropdown-item">Assignments</a>
     <a href="discussions.html" class="dropdown-item">Discussions</a>
     <a href="download.html" class="dropdown-item">Downloads</a>
-    <a href="hall" class="dropdown-item">Hall of Fame</a>
     <a href="news.html" class="dropdown-item">News Feed</a>
     <a href="pq.html" class="dropdown-item">Past Questions</a>
     <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
@@ -58,6 +59,14 @@
       <p class="page-subtitle">Unlock premium features for your studies</p>
     </div>
 
+    <div class="glass-card" style="background:linear-gradient(135deg,rgba(63,25,230,0.08),rgba(14,165,233,0.08));border:1px solid rgba(63,25,230,0.2);margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+      <span class="material-symbols-rounded" style="font-size:28px;color:#3f19e6;flex-shrink:0;">notifications</span>
+      <div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:2px;">Paid plans coming soon!</div>
+        <div class="text-muted" style="font-size:13px;">We're working on payment integration. Drop your email on support to be notified first.</div>
+      </div>
+    </div>
+
     <div class="plan-card plan-free">
       <div class="plan-badge" style="background:rgba(63,25,230,0.1);color:#3f19e6;">Current Plan</div>
       <div class="plan-name">Free</div>
@@ -65,9 +74,10 @@
       <div class="plan-period" style="color:var(--text-muted);">Forever free</div>
       <ul class="feature-list" style="color:var(--text-main);">
         <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> Basic dashboard access</li>
-        <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> AI Chatbot (5 messages/day)</li>
-        <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> View discussions</li>
-        <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> CGPA Calculator</li>
+        <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> AI Chatbot (10 messages/day)</li>
+        <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> View & post in discussions</li>
+        <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> CGPA Calculator with history</li>
+        <li><span class="material-symbols-rounded" style="color:#10b981;">check_circle</span> Assignment tracker</li>
         <li><span class="material-symbols-rounded" style="color:var(--text-muted);">lock</span> <span style="opacity:0.5;">Unlimited downloads</span></li>
         <li><span class="material-symbols-rounded" style="color:var(--text-muted);">lock</span> <span style="opacity:0.5;">Past questions archive</span></li>
       </ul>
@@ -79,6 +89,7 @@
       <div class="plan-name">Pro Student</div>
       <div class="plan-price">₦500</div>
       <div class="plan-period">per month</div>
+      <div class="coming-soon-tag"><span class="material-symbols-rounded" style="font-size:14px;">schedule</span> Coming Soon</div>
       <ul class="feature-list">
         <li><span class="material-symbols-rounded" style="color:#a78bfa;">check_circle</span> Everything in Free</li>
         <li><span class="material-symbols-rounded" style="color:#a78bfa;">check_circle</span> Unlimited AI Chatbot access</li>
@@ -87,8 +98,8 @@
         <li><span class="material-symbols-rounded" style="color:#a78bfa;">check_circle</span> Priority discussion posts</li>
         <li><span class="material-symbols-rounded" style="color:#a78bfa;">check_circle</span> Ad-free experience</li>
       </ul>
-      <button class="btn" style="background:white;color:#3f19e6;width:100%;" onclick="alert('Sign in to subscribe!')">
-        Get Pro — ₦500/month
+      <button class="coming-soon-btn">
+        <span class="material-symbols-rounded">schedule</span> Coming Soon — ₦500/month
       </button>
     </div>
 
@@ -97,6 +108,7 @@
       <div class="plan-name">Gold Scholar</div>
       <div class="plan-price">₦1,200</div>
       <div class="plan-period">per month</div>
+      <div class="coming-soon-tag"><span class="material-symbols-rounded" style="font-size:14px;">schedule</span> Coming Soon</div>
       <ul class="feature-list">
         <li><span class="material-symbols-rounded" style="color:#fde68a;">check_circle</span> Everything in Pro</li>
         <li><span class="material-symbols-rounded" style="color:#fde68a;">check_circle</span> 1-on-1 tutoring sessions</li>
@@ -105,8 +117,8 @@
         <li><span class="material-symbols-rounded" style="color:#fde68a;">check_circle</span> Dedicated support</li>
         <li><span class="material-symbols-rounded" style="color:#fde68a;">check_circle</span> Certificate of excellence</li>
       </ul>
-      <button class="btn" style="background:white;color:#f59e0b;width:100%;" onclick="alert('Sign in to subscribe!')">
-        Get Gold — ₦1,200/month
+      <button class="coming-soon-btn">
+        <span class="material-symbols-rounded">schedule</span> Coming Soon — ₦1,200/month
       </button>
     </div>
   </main>
@@ -128,8 +140,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-

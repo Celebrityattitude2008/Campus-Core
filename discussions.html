@@ -8,19 +8,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet"/>
   <script src="biu-design.js" defer></script>
   <style>
-    .thread-card { display:flex; gap:12px; padding:16px; border-radius:var(--radius-md); background:rgba(255,255,255,0.2); margin-bottom:10px; cursor:pointer; transition:background 0.2s,transform 0.2s; }
+    .thread-card { display:flex; gap:12px; padding:16px; border-radius:var(--radius-md); background:rgba(255,255,255,0.2); margin-bottom:10px; transition:background 0.2s,transform 0.2s; }
     [data-theme="dark"] .thread-card { background:rgba(0,0,0,0.2); }
-    .thread-card:hover { background:rgba(255,255,255,0.35); transform:translateX(4px); }
-    .thread-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; color:white; flex-shrink:0; font-weight:700; }
-    .thread-meta { font-size:12px; color:var(--text-muted); margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; }
+    .thread-card:hover { background:rgba(255,255,255,0.35); }
+    .thread-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; color:white; flex-shrink:0; font-weight:700; cursor:pointer; transition:transform 0.15s,opacity 0.15s; }
+    .thread-avatar:hover { transform:scale(1.1); opacity:0.85; }
+    .thread-meta { font-size:12px; color:var(--text-muted); margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .author-link { cursor:pointer; color:var(--text-muted); transition:color 0.15s; }
+    .author-link:hover { color:#3f19e6; text-decoration:underline; }
     .tag { display:inline-flex; align-items:center; padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; }
-    #post-modal { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px; }
-    #post-modal.open { display:flex; }
+    #post-modal,#user-profile-modal { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px; }
+    #post-modal.open,#user-profile-modal.open { display:flex; }
     .modal-card { width:100%; max-width:480px; background:var(--bg); border-radius:var(--radius-lg); padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:page-enter 0.3s ease-out; }
     .modal-input { width:100%; padding:12px 16px; border-radius:var(--radius-md); border:1px solid var(--border-color); background:rgba(255,255,255,0.3); color:var(--text-main); font-family:inherit; font-size:14px; outline:none; margin-bottom:12px; }
     [data-theme="dark"] .modal-input { background:rgba(0,0,0,0.2); }
     .modal-input:focus { border-color:#3f19e6; box-shadow:0 0 0 3px rgba(63,25,230,0.15); }
     .modal-textarea { min-height:100px; resize:vertical; }
+    .profile-mini-avatar { width:72px; height:72px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px; color:white; font-weight:700; margin:0 auto 12px; }
+    .friend-status-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:9999px; border:none; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s; }
   </style>
 </head>
 <body class="page-body">
@@ -41,7 +46,6 @@
     <a href="assignment.html" class="dropdown-item">Assignments</a>
     <a href="discussions.html" class="dropdown-item">Discussions</a>
     <a href="download.html" class="dropdown-item">Downloads</a>
-    <a href="hall" class="dropdown-item">Hall of Fame</a>
     <a href="news.html" class="dropdown-item">News Feed</a>
     <a href="pq.html" class="dropdown-item">Past Questions</a>
     <a href="skillswap.html" class="dropdown-item">SkillSwap</a>
@@ -105,6 +109,22 @@
     </div>
   </div>
 
+  <!-- User Profile Modal -->
+  <div id="user-profile-modal">
+    <div class="modal-card" style="max-width:360px;text-align:center;">
+      <button onclick="closeProfileModal()" style="position:absolute;top:20px;right:20px;border:none;background:none;cursor:pointer;font-size:22px;color:var(--text-muted);">✕</button>
+      <div class="profile-mini-avatar" id="modal-avatar" style="background:linear-gradient(135deg,#3f19e6,#0ea5e9);">?</div>
+      <h3 id="modal-name" style="font-size:18px;font-weight:700;margin-bottom:4px;">Loading…</h3>
+      <p id="modal-meta" class="text-muted" style="font-size:13px;margin-bottom:16px;"></p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="viewFullProfile()"><span class="material-symbols-rounded">person</span> View Profile</button>
+        <button class="friend-status-btn" id="friend-action-btn" style="background:linear-gradient(135deg,#3f19e6,#0ea5e9);color:white;" onclick="handleFriendAction()">
+          <span class="material-symbols-rounded">person_add</span> Add Friend
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Firebase -->
   <script src="config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -116,6 +136,7 @@
     const db = firebase.database();
 
     let currentUser = null;
+    let viewingUid = null;
     const avatarColors = ['#3f19e6,#0ea5e9','#10b981,#0ea5e9','#f59e0b,#ef4444','#7c3aed,#0ea5e9','#ec4899,#7c3aed'];
 
     auth.onAuthStateChanged(user => {
@@ -124,7 +145,7 @@
     });
 
     function loadThreads() {
-      db.ref('discussions').orderByChild('timestamp').limitToLast(30).on('value', snapshot => {
+      db.ref('discussions').orderByChild('timestamp').limitToLast(40).on('value', snapshot => {
         const data = snapshot.val() || {};
         renderThreads(data);
       });
@@ -141,18 +162,20 @@
 
       container.innerHTML = '';
       entries.forEach(([id, thread]) => {
-        const colorPair = avatarColors[Math.abs(thread.authorName.charCodeAt(0)) % avatarColors.length];
+        const colorPair = avatarColors[Math.abs((thread.authorName || '').charCodeAt(0)) % avatarColors.length];
         const initial = (thread.authorName || '?')[0].toUpperCase();
         const timeAgo = formatTime(thread.timestamp);
         const tagColor = getTagColor(thread.tag);
+        const authorUid = thread.uid || null;
+
         const div = document.createElement('div');
         div.className = 'thread-card';
         div.innerHTML = `
-          <div class="thread-avatar" style="background:linear-gradient(135deg,${colorPair});">${initial}</div>
+          <div class="thread-avatar" style="background:linear-gradient(135deg,${colorPair});" data-uid="${authorUid || ''}" data-name="${escHtml(thread.authorName)}" onclick="openProfileModal(this)">${initial}</div>
           <div style="flex:1;">
             <div style="font-weight:600;font-size:14px;">${escHtml(thread.title)}</div>
             <div class="thread-meta">
-              <span>By ${escHtml(thread.authorName)}</span>
+              <span class="author-link" data-uid="${authorUid || ''}" data-name="${escHtml(thread.authorName)}" onclick="openProfileModal(this)">By ${escHtml(thread.authorName)}</span>
               <span>${timeAgo}</span>
             </div>
             ${thread.body ? `<div style="font-size:13px;color:var(--text-muted);margin-top:6px;line-height:1.5;">${escHtml(thread.body.substring(0, 120))}${thread.body.length > 120 ? '…' : ''}</div>` : ''}
@@ -161,6 +184,65 @@
         `;
         container.appendChild(div);
       });
+    }
+
+    async function openProfileModal(el) {
+      const uid = el.dataset.uid;
+      const name = el.dataset.name;
+      if (!uid || !currentUser) return;
+      if (uid === currentUser.uid) { window.location.href = 'profile.html'; return; }
+
+      viewingUid = uid;
+      document.getElementById('modal-name').textContent = name || 'Loading…';
+      document.getElementById('modal-meta').textContent = 'Loading profile…';
+      document.getElementById('modal-avatar').textContent = (name || '?')[0].toUpperCase();
+      document.getElementById('user-profile-modal').classList.add('open');
+
+      const [profSnap, friendSnap] = await Promise.all([
+        db.ref('profiles/' + uid).once('value'),
+        db.ref('friends/' + currentUser.uid + '/' + uid).once('value')
+      ]);
+
+      const p = profSnap.val() || {};
+      document.getElementById('modal-name').textContent = p.fullName || name;
+      document.getElementById('modal-meta').textContent = [p.level, p.department, p.university].filter(Boolean).join(' · ') || 'Campus Core Student';
+
+      const btn = document.getElementById('friend-action-btn');
+      const isFriend = friendSnap.exists();
+      if (isFriend) {
+        btn.innerHTML = '<span class="material-symbols-rounded">chat</span> Message';
+        btn.style.background = 'linear-gradient(135deg,#10b981,#0ea5e9)';
+      } else {
+        btn.innerHTML = '<span class="material-symbols-rounded">person_add</span> Add Friend';
+        btn.style.background = 'linear-gradient(135deg,#3f19e6,#0ea5e9)';
+      }
+    }
+
+    function closeProfileModal() {
+      document.getElementById('user-profile-modal').classList.remove('open');
+      viewingUid = null;
+    }
+
+    function viewFullProfile() {
+      if (viewingUid) window.location.href = 'viewprofile.html?uid=' + viewingUid;
+    }
+
+    async function handleFriendAction() {
+      if (!currentUser || !viewingUid) return;
+      const friendSnap = await db.ref('friends/' + currentUser.uid + '/' + viewingUid).once('value');
+      if (friendSnap.exists()) {
+        window.location.href = 'chat.html?uid=' + viewingUid;
+      } else {
+        await db.ref('friends/' + currentUser.uid + '/' + viewingUid).set(true);
+        await db.ref('friends/' + viewingUid + '/' + currentUser.uid).set(true);
+        const btn = document.getElementById('friend-action-btn');
+        btn.innerHTML = '<span class="material-symbols-rounded">check</span> Friends!';
+        btn.style.background = 'linear-gradient(135deg,#10b981,#3f19e6)';
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-rounded">chat</span> Message';
+          btn.style.background = 'linear-gradient(135deg,#10b981,#0ea5e9)';
+        }, 1500);
+      }
     }
 
     function escHtml(str) {
@@ -217,7 +299,6 @@
         const snap = await db.ref('profiles/' + currentUser.uid).once('value');
         const profile = snap.val() || {};
         const authorName = profile.fullName || currentUser.displayName || currentUser.email.split('@')[0];
-
         await db.ref('discussions').push({ title, body, tag, authorName, timestamp: Date.now(), uid: currentUser.uid });
         closePostModal();
       } catch (err) {
@@ -231,8 +312,9 @@
     document.getElementById('post-modal').addEventListener('click', e => {
       if (e.target === document.getElementById('post-modal')) closePostModal();
     });
+    document.getElementById('user-profile-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('user-profile-modal')) closeProfileModal();
+    });
   </script>
 </body>
 </html>
-
-

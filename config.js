@@ -12,7 +12,4 @@ const firebaseConfig = {
   measurementId: "",
 };
 
-const geminiApiKey = "AIzaSyBC1OqnM47myCSKXE0zy61GnqKjVb6413Y";
-
 window.firebaseConfig = firebaseConfig;
-window.geminiApiKey = geminiApiKey;
